@@ -1,30 +1,21 @@
 import { useState } from "react";
 
-function Cadastro({ mudarTela }) {
-  const [nome, setNome] = useState("");
+function Login({ mudarTela }) {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Conta criada com sucesso!");
+    alert("Login realizado!");
   };
 
   return (
     <div style={styles.container}>
       <div style={styles.card}>
         <h1 style={styles.logo}>ByteBank</h1>
-        <p style={styles.subtitle}>Crie sua conta gratuita</p>
+        <p style={styles.subtitle}>Acesse sua conta</p>
 
         <form onSubmit={handleSubmit} style={styles.form}>
-          <input
-            type="text"
-            placeholder="Seu nome"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            style={styles.input}
-          />
-
           <input
             type="email"
             placeholder="Seu email"
@@ -35,21 +26,21 @@ function Cadastro({ mudarTela }) {
 
           <input
             type="password"
-            placeholder="Crie uma senha"
+            placeholder="Sua senha"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
             style={styles.input}
           />
 
           <button type="submit" style={styles.button}>
-            Criar conta
+            Entrar
           </button>
         </form>
 
         <p style={styles.footer}>
-          Já tem conta?{" "}
+          Não tem conta?{" "}
           <span style={styles.link} onClick={mudarTela}>
-            Entrar
+            Cadastrar
           </span>
         </p>
       </div>
@@ -81,6 +72,7 @@ const styles = {
   subtitle: {
     color: "#94a3b8",
     marginBottom: "25px",
+    marginTop: "20px",
   },
   form: {
     display: "flex",
@@ -115,4 +107,4 @@ const styles = {
   },
 };
 
-export default Cadastro;
+export default Login;

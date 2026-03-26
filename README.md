@@ -41,18 +41,17 @@ O projeto foi desenvolvido com:
 ## 📂 Estrutura do Projeto
 
 ```
-projeto/
-├── frontend/
-│   ├── src/
-│   ├── public/
-│   └── package.json
-├── backend/
-│   ├── models/
-│   ├── controllers/
-│   └── app.py
-├── requirements.txt
-├── README.md
-└── .gitignore
+ByteBank/
+├── app/                # pacote principal do backend Flask
+│   ├── __init__.py     # criação e configuração inicial da aplicação
+│   ├── models.py       # modelos de dados do sistema
+│   ├── routes.py       # definição das rotas/endpoints
+│   └── services.py     # regras de negócio e serviços
+├── .venv/              # ambiente virtual local do projeto
+├── .gitignore          # arquivos e pastas ignorados pelo Git
+├── README.md           # documentação do projeto
+├── requirements.txt    # dependências Python do projeto
+└── run.py              # ponto de entrada para executar a aplicação
 ```
 
 ## 🛠️ Tecnologias Utilizadas

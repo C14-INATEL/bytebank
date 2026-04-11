@@ -84,3 +84,46 @@ def test_8_buscar_usuario_existente_retorna_objeto(mock_db):
     assert resultado is not None
     assert resultado.username == "carlos"
     assert resultado.id == 42
+
+# Teste 9: Email inválido não deve chamar db.add
+def test_9_email_invalido_nao_chama_add(mock_db):
+    service = UserService()
+    dados = {"username": "erro", "email": "emailinvalido.com", "password": "123"}
+
+    resultado = service.create_user_logic(mock_db, dados)
+
+    assert resultado is None
+    mock_db.add.assert_not_called()
+
+
+# Teste 10: Buscar usuário sem DB deve retornar None
+def test_10_buscar_usuario_sem_db_retorna_none():
+    service = UserService()
+
+    resultado = service.get_user_by_id(None, 1)
+
+    assert resultado is None
+
+
+# Teste 11: Criar usuário com DB deve atribuir ID = 1
+def test_11_criar_usuario_com_db_atribui_id(mock_db):
+    service = UserService()
+    dados = {"username": "lucas", "email": "lucas@bytebank.com", "password": "123"}
+
+    resultado = service.create_user_logic(mock_db, dados)
+
+    assert resultado is not None
+    assert resultado.id == 1
+
+
+# Teste 12: Verificar se db.add recebeu um objeto User correto
+def test_12_db_add_recebe_objeto_user(mock_db):
+    service = UserService()
+    dados = {"username": "bia", "email": "bia@bytebank.com", "password": "456"}
+
+    service.create_user_logic(mock_db, dados)
+
+    usuario_passado = mock_db.add.call_args[0][0]
+
+    assert isinstance(usuario_passado, User)
+    assert usuario_passado.username == "bia"

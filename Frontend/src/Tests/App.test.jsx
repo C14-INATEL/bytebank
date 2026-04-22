@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import App from "./App";
+import App from "../App";
 
 
 // TESTE 1 - Renderiza tela de login

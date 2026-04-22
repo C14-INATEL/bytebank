@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function Login({ mudarTela }) {
+function Login({ mudarTela, irDashboard}) {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
@@ -25,7 +25,7 @@ function Login({ mudarTela }) {
 
     setErro("");
     setTimeout(() => {
-      alert("Login realizado com sucesso!");
+      irDashboard();
     }, 1000);
   };
 

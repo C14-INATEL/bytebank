@@ -7,4 +7,7 @@ def create_app():
     def home():
         return "ByteBank backend rodando!"
 
+    from .routes import bp
+    app.register_blueprint(bp)
+
     return app

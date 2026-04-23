@@ -127,3 +127,55 @@ def test_12_db_add_recebe_objeto_user(mock_db):
 
     assert isinstance(usuario_passado, User)
     assert usuario_passado.username == "bia"
+
+# ── Testes de TransactionService ─────────────────────────────────────────────
+ 
+# Teste 13: Registrar uma despesa chama db.add e retorna transação correta
+def test_13_registrar_despesa_chama_db_add(mock_db):
+    """
+    Garante que TransactionService.create_transaction chama db.add com uma
+    Transaction do tipo 'despesa' e retorna os dados corretos, sem erro.
+    Contexto: usuário registra um gasto de alimentação no sistema de finanças pessoais.
+    """
+    service = TransactionService()
+    dados = {
+        "type": "despesa",
+        "category": "alimentacao",
+        "amount": 85.50,
+        "description": "Mercado semanal",
+        "date": "2026-04-23",
+    }
+ 
+    transaction, error = service.create_transaction(mock_db, user_id=1, data=dados)
+ 
+    assert error is None
+    assert transaction is not None
+    assert transaction.type == "despesa"
+    assert transaction.category == "alimentacao"
+    assert transaction.amount == 85.50
+    mock_db.add.assert_called_once()
+ 
+ 
+# Teste 14: Dashboard retorna saldo correto com base nas transações mockadas
+def test_14_dashboard_calcula_saldo_corretamente(mock_db):
+    """
+    Garante que TransactionService.get_dashboard calcula corretamente o saldo
+    (receitas - despesas) e os gastos por categoria usando transações mockadas.
+    Contexto: visualização do painel financeiro do usuário.
+    """
+    receita = Transaction(user_id=1, type="receita", category="salario", amount=3000.0)
+    despesa1 = Transaction(user_id=1, type="despesa", category="alimentacao", amount=500.0)
+    despesa2 = Transaction(user_id=1, type="despesa", category="transporte", amount=200.0)
+ 
+    mock_db.query(Transaction).filter_by(user_id=1).all.return_value = [
+        receita, despesa1, despesa2
+    ]
+ 
+    service = TransactionService()
+    resultado = service.get_dashboard(mock_db, user_id=1)
+ 
+    assert resultado["total_receitas"] == 3000.0
+    assert resultado["total_despesas"] == 700.0
+    assert resultado["saldo"] == 2300.0
+    assert resultado["gastos_por_categoria"]["alimentacao"] == 500.0
+    assert resultado["gastos_por_categoria"]["transporte"] == 200.0

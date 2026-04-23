@@ -1,12 +1,32 @@
 import { useState } from "react";
 
-function Login({ mudarTela }) {
+function Login({ mudarTela, irDashboard}) {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Login realizado!");
+
+    if (!email || !senha) {
+      setErro("Preencha todos os campos");
+      return;
+    }
+
+    if (!email.includes("@")) {
+      setErro("Email inválido");
+      return;
+    }
+
+    if (senha.length < 6) {
+      setErro("A senha deve ter no mínimo 6 caracteres");
+      return;
+    }
+
+    setErro("");
+    setTimeout(() => {
+      irDashboard();
+    }, 1000);
   };
 
   return (
@@ -15,12 +35,18 @@ function Login({ mudarTela }) {
         <h1 style={styles.logo}>ByteBank</h1>
         <p style={styles.subtitle}>Acesse sua conta</p>
 
+        {/* 🔴 ERRO COM ESPAÇO FIXO */}
+        <p style={styles.erro}>{erro || " "}</p>
+
         <form onSubmit={handleSubmit} style={styles.form}>
           <input
             type="email"
             placeholder="Seu email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setErro("");
+            }}
             style={styles.input}
           />
 
@@ -28,7 +54,10 @@ function Login({ mudarTela }) {
             type="password"
             placeholder="Sua senha"
             value={senha}
-            onChange={(e) => setSenha(e.target.value)}
+            onChange={(e) => {
+              setSenha(e.target.value);
+              setErro("");
+            }}
             style={styles.input}
           />
 
@@ -72,7 +101,13 @@ const styles = {
   subtitle: {
     color: "#94a3b8",
     marginBottom: "25px",
-    marginTop: "20px",
+    marginTop: "30px", 
+  },
+  erro: {
+    color: "#ef4444",
+    marginBottom: "10px",
+    fontSize: "14px",
+    minHeight: "20px", 
   },
   form: {
     display: "flex",

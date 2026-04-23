@@ -4,10 +4,30 @@ function Cadastro({ mudarTela }) {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Conta criada com sucesso!");
+
+    if (!nome || !email || !senha) {
+      setErro("Preencha todos os campos");
+      return;
+    }
+
+    if (!email.includes("@")) {
+      setErro("Email inválido");
+      return;
+    }
+
+    if (senha.length < 6) {
+      setErro("A senha deve ter no mínimo 6 caracteres");
+      return;
+    }
+
+    setErro("");
+    setTimeout(() => {
+      alert("Conta criada com sucesso!");
+    }, 1000);
   };
 
   return (
@@ -16,12 +36,18 @@ function Cadastro({ mudarTela }) {
         <h1 style={styles.logo}>ByteBank</h1>
         <p style={styles.subtitle}>Crie sua conta gratuita</p>
 
+        {/* 🔴 ERRO COM ESPAÇO FIXO */}
+        <p style={styles.erro}>{erro || " "}</p>
+
         <form onSubmit={handleSubmit} style={styles.form}>
           <input
             type="text"
             placeholder="Seu nome"
             value={nome}
-            onChange={(e) => setNome(e.target.value)}
+            onChange={(e) => {
+              setNome(e.target.value);
+              setErro("");
+            }}
             style={styles.input}
           />
 
@@ -29,7 +55,10 @@ function Cadastro({ mudarTela }) {
             type="email"
             placeholder="Seu email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setErro("");
+            }}
             style={styles.input}
           />
 
@@ -37,7 +66,10 @@ function Cadastro({ mudarTela }) {
             type="password"
             placeholder="Crie uma senha"
             value={senha}
-            onChange={(e) => setSenha(e.target.value)}
+            onChange={(e) => {
+              setSenha(e.target.value);
+              setErro("");
+            }}
             style={styles.input}
           />
 
@@ -81,6 +113,13 @@ const styles = {
   subtitle: {
     color: "#94a3b8",
     marginBottom: "25px",
+     marginTop: "45px",
+  },
+  erro: {
+    color: "#ef4444",
+    marginBottom: "10px",
+    fontSize: "14px",
+    minHeight: "20px", 
   },
   form: {
     display: "flex",

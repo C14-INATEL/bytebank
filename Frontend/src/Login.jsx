@@ -5,7 +5,7 @@ function Login({ mudarTela, irDashboard}) {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
 
-  const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email || !senha) {
@@ -13,20 +13,28 @@ function Login({ mudarTela, irDashboard}) {
       return;
     }
 
-    if (!email.includes("@")) {
-      setErro("Email inválido");
-      return;
-    }
+    try {
+      // Faz a requisição real para o seu backend em Python
+      const response = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, password: senha }),
+      });
 
-    if (senha.length < 6) {
-      setErro("A senha deve ter no mínimo 6 caracteres");
-      return;
-    }
+      const data = await response.json();
 
-    setErro("");
-    setTimeout(() => {
+      if (!response.ok) {
+        throw new Error(data.error || "Erro ao fazer login");
+      }
+
+      setErro("");
+      // Salva o JWT no navegador para ser usado pelo Dashboard depois
+      localStorage.setItem("token", data.token); 
       irDashboard();
-    }, 1000);
+      
+    } catch (err) {
+      setErro(err.message);
+    }
   };
 
   return (

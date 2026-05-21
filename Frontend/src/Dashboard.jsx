@@ -1,31 +1,64 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 function Dashboard({ sair }) {
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
   const [tipo, setTipo] = useState("receita");
   const [erro, setErro] = useState("");
-  const [transacoes, setTransacoes] = useState([
-    { id: 1, descricao: "Salário", tipo: "receita", valor: 3500 },
-    { id: 2, descricao: "Mercado", tipo: "despesa", valor: 280 },
-    { id: 3, descricao: "Uber", tipo: "despesa", valor: 45.5 },
-  ]);
+  const [editandoId, setEditandoId] = useState(null);
 
-  const receitas = useMemo(() => {
-    return transacoes
-      .filter((item) => item.tipo === "receita")
-      .reduce((acc, item) => acc + item.valor, 0);
+  const [transacoes, setTransacoes] = useState(() => {
+    const transacoesSalvas = localStorage.getItem("bytebank_transacoes");
+
+    if (transacoesSalvas) {
+      return JSON.parse(transacoesSalvas);
+    }
+
+    return [
+      { id: 1, descricao: "Salário", tipo: "receita", valor: 3500 },
+      { id: 2, descricao: "Mercado", tipo: "despesa", valor: 280 },
+      { id: 3, descricao: "Uber", tipo: "despesa", valor: 45.5 },
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("bytebank_transacoes", JSON.stringify(transacoes));
   }, [transacoes]);
 
-  const despesas = useMemo(() => {
-    return transacoes
-      .filter((item) => item.tipo === "despesa")
-      .reduce((acc, item) => acc + item.valor, 0);
-  }, [transacoes]);
+  const receitas = useMemo(
+    () =>
+      transacoes
+        .filter((item) => item.tipo === "receita")
+        .reduce((acc, item) => acc + item.valor, 0),
+    [transacoes]
+  );
+
+  const despesas = useMemo(
+    () =>
+      transacoes
+        .filter((item) => item.tipo === "despesa")
+        .reduce((acc, item) => acc + item.valor, 0),
+    [transacoes]
+  );
 
   const saldo = receitas - despesas;
+  const totalMovimentado = receitas + despesas;
 
-  const handleAdicionar = (e) => {
+  const formatarMoeda = (numero) =>
+    numero.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+
+  const limparFormulario = () => {
+    setDescricao("");
+    setValor("");
+    setTipo("receita");
+    setErro("");
+    setEditandoId(null);
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!descricao || !valor) {
@@ -40,87 +73,161 @@ function Dashboard({ sair }) {
       return;
     }
 
-    const novaTransacao = {
-      id: Date.now(),
-      descricao,
-      tipo,
-      valor: valorNumero,
-    };
+    if (editandoId) {
+      setTransacoes(
+        transacoes.map((item) =>
+          item.id === editandoId
+            ? { ...item, descricao, tipo, valor: valorNumero }
+            : item
+        )
+      );
+      limparFormulario();
+      return;
+    }
 
-    setTransacoes([novaTransacao, ...transacoes]);
-    setDescricao("");
-    setValor("");
-    setTipo("receita");
+    setTransacoes([
+      { id: Date.now(), descricao, tipo, valor: valorNumero },
+      ...transacoes,
+    ]);
+
+    limparFormulario();
+  };
+
+  const editarTransacao = (item) => {
+    setDescricao(item.descricao);
+    setValor(String(item.valor));
+    setTipo(item.tipo);
+    setEditandoId(item.id);
     setErro("");
   };
 
   const removerTransacao = (id) => {
-    const novaLista = transacoes.filter((item) => item.id !== id);
-    setTransacoes(novaLista);
-  };
+    setTransacoes(transacoes.filter((item) => item.id !== id));
 
-  const formatarMoeda = (numero) => {
-    return numero.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
+    if (editandoId === id) {
+      limparFormulario();
+    }
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.topbar}>
-        <h1 style={styles.logo}>ByteBank</h1>
-        <button style={styles.logoutButton} onClick={sair}>
-          Sair
-        </button>
-      </div>
+    <div style={styles.page}>
+      <aside style={styles.sidebar}>
+        <div>
+          <h1 style={styles.sidebarLogo}>ByteBank</h1>
 
-      <div style={styles.content}>
-        <h2 style={styles.title}>Dashboard</h2>
-        <p style={styles.subtitle}>Gerencie suas receitas e despesas</p>
+          <p style={styles.menuTitle}>MENU</p>
 
-        <div style={styles.cards}>
-          <div style={styles.card}>
-            <p style={styles.cardLabel}>Saldo atual</p>
-            <h3
-              style={
-                saldo >= 0 ? styles.cardValueGreen : styles.cardValueRed
-              }
-            >
-              {formatarMoeda(saldo)}
-            </h3>
-          </div>
+          <button style={styles.menuActive}>🏠 Dashboard</button>
+          <button style={styles.menuItem}>💸 Transações</button>
+          <button style={styles.menuItem}>💳 Cartões</button>
+          <button style={styles.menuItem}>📊 Análises</button>
+          <button style={styles.menuItem}>🕘 Histórico</button>
 
-          <div style={styles.card}>
-            <p style={styles.cardLabel}>Receitas</p>
-            <h3 style={styles.cardValueGreen}>{formatarMoeda(receitas)}</h3>
-          </div>
+          <p style={styles.menuTitle}>GERAL</p>
 
-          <div style={styles.card}>
-            <p style={styles.cardLabel}>Despesas</p>
-            <h3 style={styles.cardValueRed}>{formatarMoeda(despesas)}</h3>
-          </div>
+          <button style={styles.menuItem}>⚙️ Configurações</button>
+          <button style={styles.menuItem}>❓ Ajuda</button>
         </div>
 
-        <div style={styles.grid}>
-          <div style={styles.section}>
-            <h3 style={styles.sectionTitle}>Nova transação</h3>
+        <button style={styles.logoutButton} onClick={sair}>
+          🚪 Sair
+        </button>
+      </aside>
 
-            <p style={styles.erro}>{erro || " "}</p>
+      <main style={styles.main}>
+        <div style={styles.header}>
+          <div>
+            <h2 style={styles.welcome}>Bem-vindo ao ByteBank 👋</h2>
+            <p style={styles.subtitle}>Controle suas receitas e despesas</p>
+          </div>
 
-            <form onSubmit={handleAdicionar} style={styles.form}>
+          <input
+            style={styles.search}
+            placeholder="Buscar transação..."
+            type="text"
+          />
+        </div>
+
+        <section style={styles.cards}>
+          <div style={styles.card}>
+            <p style={styles.cardLabel}>Receita total</p>
+            <h3 style={styles.greenText}>{formatarMoeda(receitas)}</h3>
+            <small style={styles.smallGreen}>▲ Entradas registradas</small>
+          </div>
+
+          <div style={styles.card}>
+            <p style={styles.cardLabel}>Despesa total</p>
+            <h3 style={styles.redText}>{formatarMoeda(despesas)}</h3>
+            <small style={styles.smallRed}>▼ Saídas registradas</small>
+          </div>
+
+          <div style={styles.card}>
+            <p style={styles.cardLabel}>Saldo atual</p>
+            <h3 style={saldo >= 0 ? styles.greenText : styles.redText}>
+              {formatarMoeda(saldo)}
+            </h3>
+            <small style={styles.smallText}>Resultado financeiro</small>
+          </div>
+
+          <div style={styles.card}>
+            <p style={styles.cardLabel}>Total de transações</p>
+            <h3 style={styles.whiteText}>{transacoes.length}</h3>
+            <small style={styles.smallText}>Movimentações cadastradas</small>
+          </div>
+        </section>
+
+        <section style={styles.grid}>
+          <div style={styles.panelLarge}>
+            <div style={styles.panelHeader}>
+              <h3 style={styles.panelTitle}>Resumo financeiro</h3>
+              <span style={styles.badge}>Mensal</span>
+            </div>
+
+            <div style={styles.chartBox}>
+              <div style={styles.chartLineGreen}></div>
+              <div style={styles.chartLineYellow}></div>
+              <div style={styles.chartInfo}>
+                <p style={styles.chartValue}>{formatarMoeda(totalMovimentado)}</p>
+                <p style={styles.smallText}>Total movimentado</p>
+              </div>
+            </div>
+          </div>
+
+          <div style={styles.panel}>
+            <h3 style={styles.panelTitle}>Meu cartão</h3>
+
+            <div style={styles.creditCard}>
+              <p style={styles.cardBank}>BYTEBANK</p>
+              <p style={styles.cardNumber}>•••• •••• •••• 7390</p>
+              <div style={styles.cardBottom}>
+                <span>Luiz Otavio</span>
+                <span>12/29</span>
+              </div>
+            </div>
+
+            <button style={styles.addCardButton}>+ Adicionar novo cartão</button>
+          </div>
+
+          <div style={styles.panel}>
+            <h3 style={styles.panelTitle}>
+              {editandoId ? "Editar transação" : "Nova transação"}
+            </h3>
+
+            <p style={styles.error}>{erro || " "}</p>
+
+            <form onSubmit={handleSubmit} style={styles.form}>
               <input
-                type="text"
+                style={styles.input}
                 placeholder="Descrição"
                 value={descricao}
                 onChange={(e) => {
                   setDescricao(e.target.value);
                   setErro("");
                 }}
-                style={styles.input}
               />
 
               <input
+                style={styles.input}
                 type="number"
                 step="0.01"
                 placeholder="Valor"
@@ -129,154 +236,333 @@ function Dashboard({ sair }) {
                   setValor(e.target.value);
                   setErro("");
                 }}
-                style={styles.input}
               />
 
               <select
+                style={styles.input}
                 value={tipo}
                 onChange={(e) => setTipo(e.target.value)}
-                style={styles.select}
               >
                 <option value="receita">Receita</option>
                 <option value="despesa">Despesa</option>
               </select>
 
-              <button type="submit" style={styles.addButton}>
-                Adicionar
+              <button style={styles.primaryButton} type="submit">
+                {editandoId ? "Salvar edição" : "Adicionar"}
               </button>
+
+              {editandoId && (
+                <button
+                  style={styles.secondaryButton}
+                  type="button"
+                  onClick={limparFormulario}
+                >
+                  Cancelar edição
+                </button>
+              )}
             </form>
           </div>
 
-          <div style={styles.section}>
-            <h3 style={styles.sectionTitle}>Transações</h3>
+          <div style={styles.panelLarge}>
+            <div style={styles.panelHeader}>
+              <h3 style={styles.panelTitle}>Últimas transações</h3>
+              <span style={styles.smallText}>Ver todas</span>
+            </div>
 
-            <div style={styles.table}>
-              {transacoes.length === 0 ? (
-                <p style={styles.emptyText}>Nenhuma transação cadastrada.</p>
-              ) : (
-                transacoes.map((item) => (
-                  <div key={item.id} style={styles.row}>
-                    <div>
-                      <p style={styles.rowTitle}>{item.descricao}</p>
-                      <p style={styles.rowCategory}>
-                        {item.tipo === "receita" ? "Receita" : "Despesa"}
-                      </p>
-                    </div>
-
-                    <div style={styles.rowRight}>
-                      <p
-                        style={
-                          item.tipo === "receita"
-                            ? styles.rowValueGreen
-                            : styles.rowValueRed
-                        }
-                      >
-                        {item.tipo === "receita" ? "+" : "-"}{" "}
-                        {formatarMoeda(item.valor)}
-                      </p>
-
-                      <button
-                        style={styles.removeButton}
-                        onClick={() => removerTransacao(item.id)}
-                      >
-                        Remover
-                      </button>
-                    </div>
+            <div style={styles.transactions}>
+              {transacoes.map((item) => (
+                <div key={item.id} style={styles.transactionRow}>
+                  <div>
+                    <p style={styles.transactionTitle}>{item.descricao}</p>
+                    <p style={styles.transactionType}>
+                      {item.tipo === "receita" ? "Receita" : "Despesa"}
+                    </p>
                   </div>
-                ))
-              )}
+
+                  <div style={styles.transactionActions}>
+                    <strong
+                      style={
+                        item.tipo === "receita"
+                          ? styles.greenTextSmall
+                          : styles.redTextSmall
+                      }
+                    >
+                      {item.tipo === "receita" ? "+" : "-"}{" "}
+                      {formatarMoeda(item.valor)}
+                    </strong>
+
+                    <button
+                      style={styles.editButton}
+                      onClick={() => editarTransacao(item)}
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      style={styles.removeButton}
+                      onClick={() => removerTransacao(item.id)}
+                    >
+                      Remover
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </div>
+
+          <div style={styles.panel}>
+            <h3 style={styles.panelTitle}>Visão geral</h3>
+
+            <div style={styles.circle}>
+              <div>
+                <h2 style={styles.circleValue}>{formatarMoeda(saldo)}</h2>
+                <p style={styles.smallText}>Saldo atual</p>
+              </div>
+            </div>
+
+            <div style={styles.legend}>
+              <span style={styles.legendItem}>🟢 Receitas</span>
+              <span style={styles.legendItem}>🔴 Despesas</span>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }
 
 const styles = {
-  container: {
+  page: {
     minHeight: "100vh",
+    display: "flex",
     background: "#0f172a",
     color: "#fff",
-    padding: "30px",
     fontFamily: "Arial, sans-serif",
   },
-  topbar: {
+  sidebar: {
+    width: "230px",
+    background: "#020617",
+    padding: "24px",
     display: "flex",
+    flexDirection: "column",
     justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "30px",
   },
-  logo: {
+  sidebarLogo: {
     color: "#22c55e",
-    margin: 0,
+    marginBottom: "35px",
+  },
+  menuTitle: {
+    color: "#64748b",
+    fontSize: "12px",
+    marginTop: "25px",
+  },
+  menuActive: {
+    width: "100%",
+    background: "#1e293b",
+    color: "#fff",
+    border: "1px solid #334155",
+    borderRadius: "10px",
+    padding: "12px",
+    textAlign: "left",
+    marginBottom: "8px",
+    cursor: "pointer",
+  },
+  menuItem: {
+    width: "100%",
+    background: "transparent",
+    color: "#94a3b8",
+    border: "none",
+    borderRadius: "10px",
+    padding: "12px",
+    textAlign: "left",
+    marginBottom: "6px",
+    cursor: "pointer",
   },
   logoutButton: {
     background: "#ef4444",
     color: "#fff",
     border: "none",
-    borderRadius: "8px",
-    padding: "10px 16px",
+    borderRadius: "10px",
+    padding: "12px",
     cursor: "pointer",
     fontWeight: "bold",
   },
-  content: {
-    maxWidth: "1100px",
-    margin: "0 auto",
+  main: {
+    flex: 1,
+    padding: "28px",
+    overflow: "auto",
   },
-  title: {
-    marginBottom: "8px",
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "25px",
+    gap: "20px",
+  },
+  welcome: {
+    margin: 0,
+    fontSize: "28px",
   },
   subtitle: {
     color: "#94a3b8",
-    marginBottom: "25px",
+    marginTop: "6px",
+  },
+  search: {
+    width: "260px",
+    background: "#1e293b",
+    color: "#fff",
+    border: "1px solid #334155",
+    borderRadius: "10px",
+    padding: "12px",
+    outline: "none",
   },
   cards: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-    gap: "20px",
-    marginBottom: "30px",
+    gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
+    gap: "18px",
+    marginBottom: "22px",
   },
   card: {
     background: "#1e293b",
-    borderRadius: "16px",
+    border: "1px solid #334155",
+    borderRadius: "18px",
     padding: "20px",
-    boxShadow: "0 10px 20px rgba(0,0,0,0.25)",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.25)",
   },
   cardLabel: {
     color: "#94a3b8",
-    marginBottom: "10px",
+    margin: "0 0 18px",
   },
-  cardValueGreen: {
-    margin: 0,
-    fontSize: "24px",
+  greenText: {
     color: "#22c55e",
-  },
-  cardValueRed: {
+    fontSize: "26px",
     margin: 0,
-    fontSize: "24px",
+  },
+  redText: {
     color: "#ef4444",
+    fontSize: "26px",
+    margin: 0,
+  },
+  whiteText: {
+    color: "#fff",
+    fontSize: "26px",
+    margin: 0,
+  },
+  smallText: {
+    color: "#94a3b8",
+    fontSize: "13px",
+  },
+  smallGreen: {
+    color: "#86efac",
+    fontSize: "13px",
+  },
+  smallRed: {
+    color: "#fca5a5",
+    fontSize: "13px",
   },
   grid: {
     display: "grid",
-    gridTemplateColumns: "1fr 1.4fr",
+    gridTemplateColumns: "1.4fr 0.9fr",
     gap: "20px",
   },
-  section: {
+  panel: {
     background: "#1e293b",
-    borderRadius: "16px",
+    border: "1px solid #334155",
+    borderRadius: "18px",
     padding: "20px",
-    boxShadow: "0 10px 20px rgba(0,0,0,0.25)",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.25)",
   },
-  sectionTitle: {
+  panelLarge: {
+    background: "#1e293b",
+    border: "1px solid #334155",
+    borderRadius: "18px",
+    padding: "20px",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.25)",
+  },
+  panelHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  panelTitle: {
     marginTop: 0,
+  },
+  badge: {
+    background: "#334155",
+    color: "#cbd5e1",
+    padding: "8px 12px",
+    borderRadius: "10px",
+    fontSize: "13px",
+  },
+  chartBox: {
+    height: "230px",
+    background: "#0f172a",
+    borderRadius: "16px",
+    position: "relative",
+    overflow: "hidden",
+    marginTop: "12px",
+  },
+  chartLineGreen: {
+    position: "absolute",
+    width: "85%",
+    height: "4px",
+    background: "#22c55e",
+    left: "8%",
+    top: "45%",
+    transform: "rotate(-8deg)",
+    borderRadius: "999px",
+  },
+  chartLineYellow: {
+    position: "absolute",
+    width: "70%",
+    height: "4px",
+    background: "#eab308",
+    left: "12%",
+    top: "58%",
+    transform: "rotate(11deg)",
+    borderRadius: "999px",
+  },
+  chartInfo: {
+    position: "absolute",
+    left: "30px",
+    bottom: "25px",
+  },
+  chartValue: {
+    fontSize: "26px",
+    margin: 0,
+    fontWeight: "bold",
+  },
+  creditCard: {
+    background: "linear-gradient(135deg, #22c55e, #14b8a6)",
+    borderRadius: "18px",
+    padding: "22px",
+    minHeight: "150px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
     marginBottom: "16px",
   },
-  erro: {
-    color: "#ef4444",
-    minHeight: "20px",
-    marginBottom: "10px",
-    fontSize: "14px",
+  cardBank: {
+    fontWeight: "bold",
+    letterSpacing: "1px",
+  },
+  cardNumber: {
+    fontSize: "20px",
+    fontWeight: "bold",
+  },
+  cardBottom: {
+    display: "flex",
+    justifyContent: "space-between",
+    fontSize: "13px",
+  },
+  addCardButton: {
+    width: "100%",
+    background: "#334155",
+    color: "#fff",
+    border: "none",
+    borderRadius: "10px",
+    padding: "12px",
+    cursor: "pointer",
   },
   form: {
     display: "flex",
@@ -284,79 +570,110 @@ const styles = {
     gap: "10px",
   },
   input: {
-    padding: "12px",
-    borderRadius: "8px",
-    border: "none",
     background: "#334155",
     color: "#fff",
+    border: "none",
+    borderRadius: "10px",
+    padding: "12px",
     outline: "none",
   },
-  select: {
-    padding: "12px",
-    borderRadius: "8px",
-    border: "none",
-    background: "#334155",
-    color: "#fff",
-    outline: "none",
+  error: {
+    color: "#ef4444",
+    minHeight: "20px",
+    fontSize: "14px",
   },
-  addButton: {
-    marginTop: "8px",
-    padding: "12px",
-    borderRadius: "8px",
-    border: "none",
+  primaryButton: {
     background: "#22c55e",
     color: "#fff",
-    fontWeight: "bold",
+    border: "none",
+    borderRadius: "10px",
+    padding: "12px",
     cursor: "pointer",
+    fontWeight: "bold",
   },
-  table: {
+  secondaryButton: {
+    background: "#475569",
+    color: "#fff",
+    border: "none",
+    borderRadius: "10px",
+    padding: "12px",
+    cursor: "pointer",
+    fontWeight: "bold",
+  },
+  transactions: {
     display: "flex",
     flexDirection: "column",
     gap: "12px",
+    marginTop: "10px",
   },
-  row: {
+  transactionRow: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "14px",
     background: "#334155",
-    borderRadius: "10px",
+    borderRadius: "14px",
+    padding: "14px",
     gap: "12px",
   },
-  rowTitle: {
+  transactionTitle: {
     margin: 0,
     fontWeight: "bold",
   },
-  rowCategory: {
-    margin: 0,
-    fontSize: "14px",
+  transactionType: {
+    margin: "4px 0 0",
     color: "#cbd5e1",
+    fontSize: "13px",
   },
-  rowRight: {
+  transactionActions: {
     display: "flex",
     alignItems: "center",
-    gap: "12px",
+    gap: "10px",
+    flexWrap: "wrap",
   },
-  rowValueGreen: {
-    margin: 0,
-    fontWeight: "bold",
+  greenTextSmall: {
     color: "#22c55e",
   },
-  rowValueRed: {
-    margin: 0,
-    fontWeight: "bold",
+  redTextSmall: {
     color: "#ef4444",
+  },
+  editButton: {
+    background: "#3b82f6",
+    color: "#fff",
+    border: "none",
+    borderRadius: "8px",
+    padding: "8px 10px",
+    cursor: "pointer",
   },
   removeButton: {
     background: "#475569",
     color: "#fff",
     border: "none",
     borderRadius: "8px",
-    padding: "8px 12px",
+    padding: "8px 10px",
     cursor: "pointer",
   },
-  emptyText: {
+  circle: {
+    height: "190px",
+    borderRadius: "50%",
+    border: "18px solid #22c55e",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "20px auto",
+    maxWidth: "190px",
+  },
+  circleValue: {
+    margin: 0,
+    textAlign: "center",
+  },
+  legend: {
+    display: "flex",
+    justifyContent: "center",
+    gap: "18px",
+  },
+  legendItem: {
     color: "#cbd5e1",
+    fontSize: "13px",
   },
 };
 

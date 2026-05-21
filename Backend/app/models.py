@@ -28,7 +28,8 @@ class Transaction:
 
     def __init__(self, user_id, type, category, amount, description="", date=None):
         if type not in self.TYPES:
-            raise ValueError(f"Tipo inválido: '{type}'. Use 'receita' ou 'despesa'.")
+            raise ValueError(
+                f"Tipo inválido: '{type}'. Use 'receita' ou 'despesa'.")
         if amount <= 0:
             raise ValueError("O valor da transação deve ser positivo.")
 

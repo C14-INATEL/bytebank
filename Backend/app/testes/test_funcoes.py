@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 from app.models import User, Transaction
 from app.services import UserService, TransactionService
 
+
 @pytest.fixture
 def mock_db():
     return MagicMock()
@@ -46,7 +47,8 @@ def test_4_verificar_se_db_foi_chamado(mock_db):
 # Teste 5: Verificar se o usuário criado possui o email correto
 def test_5_criar_usuario_verifica_email(mock_db):
     service = UserService()
-    dados = {"username": "ana", "email": "ana@bytebank.com", "password": "senha123"}
+    dados = {"username": "ana",
+             "email": "ana@bytebank.com", "password": "senha123"}
     resultado = service.create_user_logic(mock_db, dados)
     assert resultado is not None
     assert resultado.email == "ana@bytebank.com"
@@ -55,7 +57,8 @@ def test_5_criar_usuario_verifica_email(mock_db):
 # Teste 6: Verificar se o usuário criado possui a senha correta
 def test_6_criar_usuario_verifica_senha(mock_db):
     service = UserService()
-    dados = {"username": "joao", "email": "joao@bytebank.com", "password": "minhasenha"}
+    dados = {"username": "joao", "email": "joao@bytebank.com",
+             "password": "minhasenha"}
     resultado = service.create_user_logic(mock_db, dados)
     assert resultado is not None
     assert resultado.password == "minhasenha"
@@ -64,7 +67,8 @@ def test_6_criar_usuario_verifica_senha(mock_db):
 # Teste 7: Verificar se a criação sem DB não atribui ID ao usuário
 def test_7_criar_usuario_sem_db_nao_atribui_id():
     service = UserService()
-    dados = {"username": "maria", "email": "maria@bytebank.com", "password": "abc"}
+    dados = {"username": "maria",
+             "email": "maria@bytebank.com", "password": "abc"}
     resultado = service.create_user_logic(None, dados)
     assert resultado is not None
     assert resultado.id is None
@@ -72,7 +76,8 @@ def test_7_criar_usuario_sem_db_nao_atribui_id():
 
 # Teste 8: Verificar se a busca de usuário retorna o objeto correto quando encontrado no DB
 def test_8_buscar_usuario_existente_retorna_objeto(mock_db):
-    usuario_mock = User(username="carlos", email="carlos@bytebank.com", password="xyz")
+    usuario_mock = User(username="carlos",
+                        email="carlos@bytebank.com", password="xyz")
     usuario_mock.id = 42
     mock_db.query().filter().first.return_value = usuario_mock
 
@@ -107,7 +112,8 @@ def test_10_buscar_usuario_sem_db_retorna_none():
 # Teste 11: Criar usuário com DB deve atribuir ID = 1
 def test_11_criar_usuario_com_db_atribui_id(mock_db):
     service = UserService()
-    dados = {"username": "lucas", "email": "lucas@bytebank.com", "password": "123"}
+    dados = {"username": "lucas",
+             "email": "lucas@bytebank.com", "password": "123"}
 
     resultado = service.create_user_logic(mock_db, dados)
 
@@ -146,7 +152,8 @@ def test_13_registrar_despesa_chama_db_add(mock_db):
         "date": "2026-04-23",
     }
 
-    transaction, error = service.create_transaction(mock_db, user_id=1, data=dados)
+    transaction, error = service.create_transaction(
+        mock_db, user_id=1, data=dados)
 
     assert error is None
     assert transaction is not None
@@ -163,9 +170,12 @@ def test_14_dashboard_calcula_saldo_corretamente(mock_db):
     (receitas - despesas) e os gastos por categoria usando transações mockadas.
     Contexto: visualização do painel financeiro do usuário.
     """
-    receita = Transaction(user_id=1, type="receita", category="salario", amount=3000.0)
-    despesa1 = Transaction(user_id=1, type="despesa", category="alimentacao", amount=500.0)
-    despesa2 = Transaction(user_id=1, type="despesa", category="transporte", amount=200.0)
+    receita = Transaction(user_id=1, type="receita",
+                          category="salario", amount=3000.0)
+    despesa1 = Transaction(user_id=1, type="despesa",
+                           category="alimentacao", amount=500.0)
+    despesa2 = Transaction(user_id=1, type="despesa",
+                           category="transporte", amount=200.0)
 
     mock_db.query(Transaction).filter_by(user_id=1).all.return_value = [
         receita, despesa1, despesa2
@@ -195,7 +205,8 @@ def test_15_update_transaction_com_mock(mock_db):
     )
     transacao_mock.id = 1
 
-    mock_db.query(Transaction).filter_by(id=1).first.return_value = transacao_mock
+    mock_db.query(Transaction).filter_by(
+        id=1).first.return_value = transacao_mock
 
     dados = {
         "amount": 120.0,
@@ -227,7 +238,8 @@ def test_16_delete_transaction_com_mock(mock_db):
     )
     transacao_mock.id = 1
 
-    mock_db.query(Transaction).filter_by(id=1).first.return_value = transacao_mock
+    mock_db.query(Transaction).filter_by(
+        id=1).first.return_value = transacao_mock
 
     resultado = service.delete_transaction(mock_db, 1)
 

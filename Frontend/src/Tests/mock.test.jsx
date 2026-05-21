@@ -42,7 +42,7 @@ describe("Testes com Mock - ByteBank", () => {
 
     render(<Dashboard sair={sairMock} />);
 
-    fireEvent.click(screen.getByText("Sair"));
+    fireEvent.click(screen.getByText(/Sair/i));
 
     expect(sairMock).toHaveBeenCalled();
   });

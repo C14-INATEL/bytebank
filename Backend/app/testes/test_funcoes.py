@@ -1,8 +1,8 @@
 import pytest
 from unittest.mock import MagicMock
 
-from Backend.app.models import User, Transaction
-from Backend.app.services import UserService, TransactionService
+from app.models import User, Transaction
+from app.services import UserService, TransactionService
 
 
 @pytest.fixture

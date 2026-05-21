@@ -1,5 +1,15 @@
-.venv/
+# IDE
+.idea/
+.vscode/
+
+# Python
 __pycache__/
 *.pyc
+*.pyo
 .env
-.vscode/
+*.egg-info/
+dist/
+build/
+
+# Pytest
+.pytest_cache/

@@ -32,9 +32,32 @@ def token_required(f):
         return f(current_user_id, *args, **kwargs)
     return decorated
 
-# ── Rotas Abertas (Não precisam de Token) ────────────────────────────────────
+# ── Cadastro de Usuários (Não precisa de Token) ──────────────────────────────
 
 
+@bp.route("/users", methods=["POST"])
+def create_user():
+    """Rota para criar um novo usuário no MongoDB."""
+    data = request.get_json()
+
+    if not data or not all(k in data for k in ("username", "email", "password")):
+        return jsonify({"error": "Campos obrigatórios: username, email, password"}), 400
+
+    user, error = user_service.create_user_logic(db, user_data=data)
+
+    if error:
+        return jsonify({"error": error}), 422
+
+    return jsonify({
+        "id": user["_id"],
+        "username": user["username"],
+        "email": user["email"]
+    }), 201
+
+# ── Sistema de Login (Não precisa de Token) ──────────────────────────────────
+
+
+# ── Sistema de Login (Não precisa de Token) ──────────────────────────────────
 @bp.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -52,13 +75,12 @@ def login():
 
     return jsonify({"token": token, "username": user["username"]}), 200
 
-# ── Rotas Protegidas (Exigem o Token) ────────────────────────────────────────
+# ── Transações e Histórico (Exigem o Token) ──────────────────────────────────
 
 
 @bp.route("/transactions", methods=["POST"])
-@token_required  # <- O guarda-costas em ação!
+@token_required
 def create_transaction(current_user_id):
-    """user_id não vem mais da URL, vem de dentro do token verificado."""
     data = request.get_json()
     transaction, error = transaction_service.create_transaction(
         db, user_id=current_user_id, data=data)
@@ -74,3 +96,39 @@ def list_transactions(current_user_id):
     transactions = transaction_service.get_transactions(
         db, user_id=current_user_id)
     return jsonify(transactions), 200
+
+
+@bp.route("/transactions/<string:transaction_id>", methods=["PUT"])
+@token_required
+def update_transaction(current_user_id, transaction_id):
+    """Edita uma transação existente no MongoDB."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Nenhum dado enviado."}), 400
+
+    transaction, error = transaction_service.update_transaction(
+        db, transaction_id=transaction_id, data=data)
+    if error:
+        return jsonify({"error": error}), 422
+    return jsonify(transaction), 200
+
+
+@bp.route("/transactions/<string:transaction_id>", methods=["DELETE"])
+@token_required
+def delete_transaction(current_user_id, transaction_id):
+    """Exclui uma transação pelo ID no MongoDB."""
+    deleted = transaction_service.delete_transaction(
+        db, transaction_id=transaction_id)
+    if not deleted:
+        return jsonify({"error": "Transação não encontrada."}), 404
+    return jsonify({"message": "Transação removida com sucesso."}), 200
+
+# ── Dashboard (Exige o Token) ────────────────────────────────────────────────
+
+
+@bp.route("/dashboard", methods=["GET"])
+@token_required
+def dashboard(current_user_id):
+    """Retorna o resumo financeiro (saldo, receitas, despesas) do usuário logado."""
+    summary = transaction_service.get_dashboard(db, user_id=current_user_id)
+    return jsonify(summary), 200

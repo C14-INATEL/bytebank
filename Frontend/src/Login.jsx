@@ -13,11 +13,23 @@ const handleSubmit = async (e) => {
       return;
     }
 
+    if (!email.includes("@")) {
+      setErro("Email inválido");
+      return;
+    }
+
+    if (senha.length < 6) {
+      setErro("A senha deve ter no mínimo 6 caracteres");
+      return;
+    }
+
     try {
-      // Faz a requisição real para o seu backend em Python
-      const response = await fetch("http://localhost:5000/api/login", {
+      // ⚠️ Conexão real com o IP numérico do Flask e a rota correta
+      const response = await fetch("http://127.0.0.1:5000/api/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json" 
+        },
         body: JSON.stringify({ email: email, password: senha }),
       });
 
@@ -28,8 +40,11 @@ const handleSubmit = async (e) => {
       }
 
       setErro("");
-      // Salva o JWT no navegador para ser usado pelo Dashboard depois
+      
+      // Guarda o crachá de segurança (Token JWT) no navegador
       localStorage.setItem("token", data.token); 
+      
+      // Entra no sistema de verdade!
       irDashboard();
       
     } catch (err) {

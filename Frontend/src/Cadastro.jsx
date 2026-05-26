@@ -6,28 +6,43 @@ function Cadastro({ mudarTela }) {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!nome || !email || !senha) {
       setErro("Preencha todos os campos");
       return;
     }
-
     if (!email.includes("@")) {
       setErro("Email inválido");
       return;
     }
-
     if (senha.length < 6) {
       setErro("A senha deve ter no mínimo 6 caracteres");
       return;
     }
 
-    setErro("");
-    setTimeout(() => {
+    try {
+      // Faz a requisição real para o seu backend para criar o usuário
+      const response = await fetch("http://127.0.0.1:5000/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: nome, email: email, password: senha }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Erro ao criar conta");
+      }
+
+      setErro("");
       alert("Conta criada com sucesso!");
-    }, 1000);
+      mudarTela(); // Volta para a tela de login
+      
+    } catch (err) {
+      setErro(err.message);
+    }
   };
 
   return (

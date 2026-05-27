@@ -72,25 +72,18 @@ ByteBank/
 ## 🛠️ Tecnologias Utilizadas
 
 ### 🎨 Frontend
-<<<<<<< HEAD
 
-=======
->>>>>>> 726a406b42a770a0562d69c46d8a948baf598dcc
 - React 19 + Vite
 - JavaScript (ES Modules)
 - Vitest + Testing Library (testes)
 
 ### ⚙️ Backend
-<<<<<<< HEAD
 
-=======
->>>>>>> 726a406b42a770a0562d69c46d8a948baf598dcc
 - Python 3.11 + Flask
 - PyJWT (autenticação)
 - pytest (testes)
 
 ### 🗄️ Banco de Dados
-<<<<<<< HEAD
 
 - MongoDB Atlas (pymongo)
 
@@ -102,17 +95,6 @@ ByteBank/
 
 ---
 
-=======
-- MongoDB Atlas (pymongo)
-
-### 🔧 Ferramentas
-- Git + GitHub (versionamento)
-- GitLab CI (pipeline CI/CD)
-- npm (Frontend) + pip (Backend) — gerenciamento de dependências
-
----
-
->>>>>>> 726a406b42a770a0562d69c46d8a948baf598dcc
 ## ⚙️ Instalação e Execução
 
 ### Pré-requisitos
@@ -180,7 +162,6 @@ npm test
 
 Todos os endpoints abaixo exigem o header `Authorization: Bearer <token>`, exceto `/api/users` e `/api/login`.
 
-<<<<<<< HEAD
 | Método    | Endpoint                  | Descrição                   |
 | ---------- | ------------------------- | ----------------------------- |
 | `POST`   | `/api/users`            | Cadastro de novo usuário     |
@@ -190,17 +171,6 @@ Todos os endpoints abaixo exigem o header `Authorization: Bearer <token>`, excet
 | `POST`   | `/api/transactions`     | Cria nova transação         |
 | `PUT`    | `/api/transactions/:id` | Edita uma transação         |
 | `DELETE` | `/api/transactions/:id` | Remove uma transação        |
-=======
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| `POST` | `/api/users` | Cadastro de novo usuário |
-| `POST` | `/api/login` | Login — retorna token JWT |
-| `GET` | `/api/dashboard` | Resumo financeiro do usuário |
-| `GET` | `/api/transactions` | Lista todas as transações |
-| `POST` | `/api/transactions` | Cria nova transação |
-| `PUT` | `/api/transactions/:id` | Edita uma transação |
-| `DELETE` | `/api/transactions/:id` | Remove uma transação |
->>>>>>> 726a406b42a770a0562d69c46d8a948baf598dcc
 
 ---
 
@@ -208,32 +178,20 @@ Todos os endpoints abaixo exigem o header `Authorization: Bearer <token>`, excet
 
 O arquivo `.gitlab-ci.yml` na raiz define o pipeline com dois jobs executados automaticamente a cada push:
 
-<<<<<<< HEAD
 | Job                | Imagem               | O que faz                               |
 | ------------------ | -------------------- | --------------------------------------- |
 | `backend-tests`  | `python:3.11-slim` | Instala dependências e roda `pytest` |
 | `frontend-tests` | `node:20-slim`     | Instala dependências e roda `vitest` |
-=======
-| Job | Imagem | O que faz |
-|-----|--------|-----------|
-| `backend-tests` | `python:3.11-slim` | Instala dependências e roda `pytest` |
-| `frontend-tests` | `node:20-slim` | Instala dependências e roda `vitest` |
->>>>>>> 726a406b42a770a0562d69c46d8a948baf598dcc
-
-> ℹ️ **GitHub Actions não é utilizado.** O CI/CD é feito via **GitLab CI**.
 
 ---
 
 ## 🤖 Uso de IA
 
-> *Seção a ser preenchida pelo grupo conforme exigido pela NP2.*
+> preencher
 
 ---
 
 ## 👥 Equipe
 
-> *Adicionar nomes dos integrantes.*
-<<<<<<< HEAD
+> nomes
 >
-=======
->>>>>>> 726a406b42a770a0562d69c46d8a948baf598dcc

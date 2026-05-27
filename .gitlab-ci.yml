@@ -40,7 +40,20 @@ frontend-tests:
     expire_in: 7 days
 
 # ──────────────────────────────────────────────
-# Job 3 — Build do Frontend
+# Job 3 — Lint do Frontend (ESLint)
+# ──────────────────────────────────────────────
+frontend-lint:
+  stage: test
+  image: node:20-slim
+  before_script:
+    - cd Frontend
+    - npm ci
+  script:
+    - npm run lint
+  allow_failure: false
+
+# ──────────────────────────────────────────────
+# Job 4 — Build do Frontend
 # ──────────────────────────────────────────────
 frontend-build:
   stage: test

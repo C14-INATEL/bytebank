@@ -38,3 +38,20 @@ frontend-tests:
     paths:
       - Frontend/test-results/
     expire_in: 7 days
+
+# ──────────────────────────────────────────────
+# Job 3 — Build do Frontend
+# ──────────────────────────────────────────────
+frontend-build:
+  stage: test
+  image: node:20-slim
+  before_script:
+    - cd Frontend
+    - npm ci
+  script:
+    - npm run build
+  artifacts:
+    when: always
+    paths:
+      - Frontend/dist/
+    expire_in: 7 days

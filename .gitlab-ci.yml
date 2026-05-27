@@ -1,0 +1,40 @@
+stages:
+  - test
+
+# ─────────────────────────────────────────────
+# Job 1 — Testes unitários do Backend (pytest)
+# ─────────────────────────────────────────────
+backend-tests:
+  stage: test
+  image: python:3.11-slim
+  before_script:
+    - pip install --upgrade pip
+    - pip install -r requirements.txt
+    - pip install pytest pytest-cov flask-cors
+  script:
+    - cd Backend
+    - python -m pytest app/testes/test_funcoes.py -v --tb=short --junitxml=report-backend.xml
+  artifacts:
+    when: always
+    reports:
+      junit: Backend/report-backend.xml
+    paths:
+      - Backend/report-backend.xml
+    expire_in: 7 days
+
+# ──────────────────────────────────────────────
+# Job 2 — Testes unitários do Frontend (vitest)
+# ──────────────────────────────────────────────
+frontend-tests:
+  stage: test
+  image: node:20-slim
+  before_script:
+    - cd Frontend
+    - npm ci
+  script:
+    - npm test -- --run --reporter=verbose
+  artifacts:
+    when: always
+    paths:
+      - Frontend/test-results/
+    expire_in: 7 days

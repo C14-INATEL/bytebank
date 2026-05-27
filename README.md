@@ -1,195 +1,93 @@
-# 💰 ByteBank
+# bytebank
 
-<p align="center">
-  Sistema de controle de finanças pessoais para gerenciamento de receitas e despesas.
-</p>
-<p align="center">
-  🚧 Projeto acadêmico em desenvolvimento — INATEL C14 Engenharia de Software
-</p>
----
 
-## 📌 Sobre o Projeto
 
-O **ByteBank** é uma aplicação web que auxilia usuários no controle de suas finanças pessoais, permitindo o registro, organização e análise de receitas e despesas. O sistema oferece dashboard com resumo financeiro, gráficos por categoria e histórico completo de transações.
+## Getting started
 
----
+To make it easy for you to get started with GitLab, here's a list of recommended next steps.
 
-## 🚀 Funcionalidades
+Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
 
-* 🔐 Cadastro de usuários
-* 🔑 Login com autenticação JWT
-* 💸 Registro de receitas e despesas
-* ✏️ Edição e exclusão de transações
-* 📊 Dashboard com resumo financeiro (saldo, receitas, despesas)
-* 📈 Gráficos de gastos por categoria
-* 🧾 Histórico de transações
+## Add your files
 
----
-
-## 🏗️ Arquitetura
-
-* Arquitetura em **3 camadas** (Apresentação → Serviço → Dados)
-* Backend estruturado no padrão **MVC**
-* Comunicação via **API REST** com autenticação **JWT**
-* Banco de dados **MongoDB Atlas** (cloud)
-
----
-
-## 📂 Estrutura do Projeto
+* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
+* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
 
 ```
-ByteBank/
-├── Backend/
-│   └── app/
-│       ├── __init__.py       # configuração Flask + conexão MongoDB
-│       ├── models.py         # modelos de dados (User, Transaction)
-│       ├── routes.py         # endpoints da API REST
-│       ├── services.py       # regras de negócio
-│       └── testes/
-│           └── test_funcoes.py  # testes unitários (pytest)
-├── Frontend/
-│   ├── src/
-│   │   ├── App.jsx           # roteamento principal
-│   │   ├── Login.jsx         # tela de login
-│   │   ├── Cadastro.jsx      # tela de cadastro
-│   │   ├── Dashboard.jsx     # painel financeiro
-│   │   └── Tests/
-│   │       ├── App.test.jsx      # testes de navegação
-│   │       ├── dashboard.test.jsx
-│   │       └── mock.test.jsx
-│   ├── package.json
-│   └── vite.config.js
-├── .gitlab-ci.yml            # pipeline CI/CD (GitLab CI)
-├── requirements.txt          # dependências Python
-├── run.py                    # ponto de entrada do backend
-└── README.md
+cd existing_repo
+git remote add origin https://gitlab.com/luizotavio-amante/bytebank.git
+git branch -M main
+git push -uf origin main
 ```
 
----
+## Integrate with your tools
 
-## 🛠️ Tecnologias Utilizadas
+* [Set up project integrations](https://gitlab.com/luizotavio-amante/bytebank/-/settings/integrations)
 
-### 🎨 Frontend
+## Collaborate with your team
 
-* React 19 + Vite
-* JavaScript (ES Modules)
-* Vitest + Testing Library (testes)
+* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
+* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
+* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
+* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
+* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
 
-### ⚙️ Backend
+## Test and Deploy
 
-* Python 3.11 + Flask
-* PyJWT (autenticação)
-* pytest (testes)
+Use the built-in continuous integration in GitLab.
 
-### 🗄️ Banco de Dados
+* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
+* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
+* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
+* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
+* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
 
-* MongoDB Atlas (pymongo)
+***
 
-### 🔧 Ferramentas
+# Editing this README
 
-* Git + GitHub (versionamento)
-* GitLab CI (pipeline CI/CD)
-* npm (Frontend) + pip (Backend) — gerenciamento de dependências
+When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
 
----
+## Suggestions for a good README
 
-## ⚙️ Instalação e Execução
+Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
 
-### Pré-requisitos
+## Name
+Choose a self-explaining name for your project.
 
-* Python 3.11+
-* Node.js 20+
-* Acesso à internet (MongoDB Atlas)
+## Description
+Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
 
-### Backend
+## Badges
+On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
 
-```bash
-# Clone o repositório
-git clone <url-do-repositorio>
-cd ByteBank
+## Visuals
+Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
 
-# Crie e ative o ambiente virtual
-python -m venv .venv
-source .venv/bin/activate        # Linux/Mac
-.venv\Scripts\activate           # Windows
+## Installation
+Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
 
-# Instale as dependências
-pip install -r requirements.txt
+## Usage
+Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-# Inicie o servidor
-python run.py
-```
+## Support
+Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
 
-O backend sobe em `http://localhost:5000`.
+## Roadmap
+If you have ideas for releases in the future, it is a good idea to list them in the README.
 
-### Frontend
+## Contributing
+State if you are open to contributions and what your requirements are for accepting them.
 
-```bash
-cd Frontend
+For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
 
-# Instale as dependências
-npm install
+You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
 
-# Inicie o servidor de desenvolvimento
-npm run dev
-```
+## Authors and acknowledgment
+Show your appreciation to those who have contributed to the project.
 
-O frontend sobe em `http://localhost:5173`.
+## License
+For open source projects, say how it is licensed.
 
----
-
-## 🧪 Testes
-
-### Backend (pytest)
-
-```bash
-cd Backend
-python -m pytest app/testes/test_funcoes.py -v
-```
-
-### Frontend (vitest)
-
-```bash
-cd Frontend
-npm test
-```
-
----
-
-## 🔌 Endpoints da API
-
-Todos os endpoints abaixo exigem o header `Authorization: Bearer <token>`, exceto `/api/users` e `/api/login`.
-
-| Método    | Endpoint                  | Descrição                   |
-| ---------- | ------------------------- | ----------------------------- |
-| `POST`   | `/api/users`            | Cadastro de novo usuário     |
-| `POST`   | `/api/login`            | Login — retorna token JWT    |
-| `GET`    | `/api/dashboard`        | Resumo financeiro do usuário |
-| `GET`    | `/api/transactions`     | Lista todas as transações   |
-| `POST`   | `/api/transactions`     | Cria nova transação         |
-| `PUT`    | `/api/transactions/:id` | Edita uma transação         |
-| `DELETE` | `/api/transactions/:id` | Remove uma transação        |
-
----
-
-## 🔄 Pipeline CI/CD (GitLab CI)
-
-O arquivo `.gitlab-ci.yml` na raiz define o pipeline com dois jobs executados automaticamente a cada push:
-
-| Job                | Imagem               | O que faz                               |
-| ------------------ | -------------------- | --------------------------------------- |
-| `backend-tests`  | `python:3.11-slim` | Instala dependências e roda `pytest` |
-| `frontend-tests` | `node:20-slim`     | Instala dependências e roda `vitest` |
-
----
-
-## 🤖 Uso de IA
-
-> preencher
-
----
-
-## 👥 Equipe
-
-> nomes
->
+## Project status
+If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.

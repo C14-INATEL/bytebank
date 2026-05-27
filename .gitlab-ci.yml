@@ -13,7 +13,11 @@ backend-tests:
     - pip install pytest pytest-cov flask-cors
   script:
     - cd Backend
+<<<<<<< HEAD
     - PYTHONPATH=. python -m pytest app/testes/test_funcoes.py -v --tb=short --junitxml=report-backend.xml
+=======
+    - python -m pytest app/testes/test_funcoes.py -v --tb=short --junitxml=report-backend.xml
+>>>>>>> 726a406b42a770a0562d69c46d8a948baf598dcc
   artifacts:
     when: always
     reports:

@@ -5,7 +5,7 @@ function Login({ mudarTela, irDashboard}) {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
 
-  const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email || !senha) {
@@ -23,10 +23,33 @@ function Login({ mudarTela, irDashboard}) {
       return;
     }
 
-    setErro("");
-    setTimeout(() => {
+    try {
+      // ⚠️ Conexão real com o IP numérico do Flask e a rota correta
+      const response = await fetch("http://127.0.0.1:5000/api/login", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json" 
+        },
+        body: JSON.stringify({ email: email, password: senha }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Erro ao fazer login");
+      }
+
+      setErro("");
+      
+      // Guarda o crachá de segurança (Token JWT) no navegador
+      localStorage.setItem("token", data.token); 
+      
+      // Entra no sistema de verdade!
       irDashboard();
-    }, 1000);
+      
+    } catch (err) {
+      setErro(err.message);
+    }
   };
 
   return (

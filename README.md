@@ -3,9 +3,11 @@
 <p align="center">
   Sistema de controle de finanças pessoais para gerenciamento de receitas e despesas.
 </p>
+
 <p align="center">
   🚧 Projeto acadêmico em desenvolvimento — INATEL C14 Engenharia de Software
 </p>
+
 ---
 
 ## 📌 Sobre o Projeto
@@ -16,22 +18,22 @@ O **ByteBank** é uma aplicação web que auxilia usuários no controle de suas 
 
 ## 🚀 Funcionalidades
 
-* 🔐 Cadastro de usuários
-* 🔑 Login com autenticação JWT
-* 💸 Registro de receitas e despesas
-* ✏️ Edição e exclusão de transações
-* 📊 Dashboard com resumo financeiro (saldo, receitas, despesas)
-* 📈 Gráficos de gastos por categoria
-* 🧾 Histórico de transações
+- 🔐 Cadastro de usuários
+- 🔑 Login com autenticação JWT
+- 💸 Registro de receitas e despesas
+- ✏️ Edição e exclusão de transações
+- 📊 Dashboard com resumo financeiro (saldo, receitas, despesas)
+- 📈 Gráficos de gastos por categoria
+- 🧾 Histórico de transações
 
 ---
 
 ## 🏗️ Arquitetura
 
-* Arquitetura em **3 camadas** (Apresentação → Serviço → Dados)
-* Backend estruturado no padrão **MVC**
-* Comunicação via **API REST** com autenticação **JWT**
-* Banco de dados **MongoDB Atlas** (cloud)
+- Arquitetura em **3 camadas** (Apresentação → Serviço → Dados)
+- Backend estruturado no padrão **MVC**
+- Comunicação via **API REST** com autenticação **JWT**
+- Banco de dados **MongoDB Atlas** (cloud)
 
 ---
 
@@ -71,25 +73,25 @@ ByteBank/
 
 ### 🎨 Frontend
 
-* React 19 + Vite
-* JavaScript (ES Modules)
-* Vitest + Testing Library (testes)
+- React 19 + Vite
+- JavaScript (ES Modules)
+- Vitest + Testing Library (testes)
 
 ### ⚙️ Backend
 
-* Python 3.11 + Flask
-* PyJWT (autenticação)
-* pytest (testes)
+- Python 3.11 + Flask
+- PyJWT (autenticação)
+- pytest (testes)
 
 ### 🗄️ Banco de Dados
 
-* MongoDB Atlas (pymongo)
+- MongoDB Atlas (pymongo)
 
 ### 🔧 Ferramentas
 
-* Git + GitHub (versionamento)
-* GitLab CI (pipeline CI/CD)
-* npm (Frontend) + pip (Backend) — gerenciamento de dependências
+- Git + GitHub (versionamento)
+- GitLab CI (pipeline CI/CD)
+- npm (Frontend) + pip (Backend) — gerenciamento de dependências
 
 ---
 
@@ -97,9 +99,9 @@ ByteBank/
 
 ### Pré-requisitos
 
-* Python 3.11+
-* Node.js 20+
-* Acesso à internet (MongoDB Atlas)
+- Python 3.11+
+- Node.js 20+
+- Acesso à internet (MongoDB Atlas)
 
 ### Backend
 
@@ -181,15 +183,17 @@ O arquivo `.gitlab-ci.yml` na raiz define o pipeline com dois jobs executados au
 | `backend-tests`  | `python:3.11-slim` | Instala dependências e roda `pytest` |
 | `frontend-tests` | `node:20-slim`     | Instala dependências e roda `vitest` |
 
+> ℹ️ **GitHub Actions não é utilizado.** O CI/CD é feito via **GitLab CI**.
+
 ---
 
 ## 🤖 Uso de IA
 
-> preencher
+> *Seção a ser preenchida pelo grupo conforme exigido pela NP2.*
 
 ---
 
 ## 👥 Equipe
 
-> nomes
+> *Adicionar nomes dos integrantes.*
 >

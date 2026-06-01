@@ -13,3 +13,7 @@ build/
 
 # Pytest
 .pytest_cache/
+.venv/
+venv/
+node_modules/
+dist/

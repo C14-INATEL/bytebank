@@ -105,6 +105,40 @@ ByteBank/
 
 ---
 
+### US-02 — Registro de receitas e despesas
+
+> Como **usuário autenticado**, eu quero registrar uma transação financeira (receita ou despesa) com categoria, valor e descrição para que eu possa controlar meu fluxo de caixa.
+
+| Campo       | Valor                          |
+|-------------|--------------------------------|
+| Prioridade  | Alta                           |
+| Status      | Entregue                       |
+
+**Critérios de aceitação**
+
+**Cenário 1 — Registro de transação válida**
+- **Given** que o usuário está no Dashboard e preenche tipo, categoria, valor positivo e descrição
+- **When** ele clica em "Adicionar"
+- **Then** a transação é salva via `POST /api/transactions`, vinculada ao seu `user_id`, e aparece imediatamente no histórico
+
+**Cenário 2 — Registro com valor inválido**
+- **Given** que o usuário tenta registrar uma transação com valor zero ou negativo
+- **When** o backend recebe os dados
+- **Then** a API retorna HTTP 422 com a mensagem "O valor deve ser um número positivo."
+
+**Cenário 3 — Edição de transação existente**
+- **Given** que o usuário deseja editar uma transação já registrada
+- **When** ele envia `PUT /api/transactions/:id` com os campos a alterar
+- **Then** apenas os campos enviados são atualizados e o sistema retorna o documento atualizado com HTTP 200
+
+**Rastreabilidade**
+
+| Issue / PR | Código | Testes automatizados |
+|------------|--------|----------------------|
+| #7 — CRUD de transações | `services.py → TransactionService` | `TestTransactionService`, `TestRotaTransacoes` |
+
+---
+
 ## 🛠️ Tecnologias Utilizadas
 
 ### 🎨 Frontend

@@ -69,6 +69,42 @@ ByteBank/
 
 ---
 
+## 📖 Histórias de Usuário
+
+### US-01 — Autenticação segura com JWT
+
+> Como **usuário cadastrado**, eu quero fazer login com email e senha para que meus dados financeiros sejam acessados apenas por mim.
+
+| Campo       | Valor                          |
+|-------------|--------------------------------|
+| Prioridade  | Alta                           |
+| Status      | Entregue                       |
+
+**Critérios de aceitação**
+
+**Cenário 1 — Login com credenciais válidas**
+- **Given** que o usuário está na tela de login com email e senha preenchidos corretamente
+- **When** ele clica em "Entrar"
+- **Then** o sistema autentica via `POST /api/login`, retorna um token JWT válido e redireciona para o Dashboard
+
+**Cenário 2 — Login com credenciais inválidas**
+- **Given** que o usuário informa email inexistente ou senha errada
+- **When** ele tenta fazer login
+- **Then** a API retorna HTTP 401 e a interface exibe uma mensagem de erro sem expor detalhes internos
+
+**Cenário 3 — Acesso a rota protegida sem token**
+- **Given** que o usuário tenta acessar qualquer rota protegida sem o header `Authorization: Bearer <token>`
+- **When** a requisição chega ao backend
+- **Then** o middleware JWT bloqueia e retorna HTTP 401
+
+**Rastreabilidade**
+
+| Issue / PR | Código | Testes automatizados |
+|------------|--------|----------------------|
+| #3 — Implementar autenticação JWT | `routes.py → token_required` | `TestRotaLogin`, `TestMiddlewareJWT` |
+
+---
+
 ## 🛠️ Tecnologias Utilizadas
 
 ### 🎨 Frontend

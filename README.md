@@ -131,6 +131,32 @@ ByteBank/
 - **When** ele envia `PUT /api/transactions/:id` com os campos a alterar
 - **Then** apenas os campos enviados são atualizados e o sistema retorna o documento atualizado com HTTP 200
 
+### US-03 — Dashboard financeiro com resumo e categorias
+
+> Como **usuário autenticado**, eu quero visualizar meu saldo atual, total de receitas, total de despesas e gastos por categoria para que eu entenda rapidamente minha situação financeira.
+
+| Campo       | Valor                          |
+|-------------|--------------------------------|
+| Prioridade  | Alta                           |
+| Status      | Entregue                       |
+
+**Critérios de aceitação**
+
+**Cenário 1 — Visualização do resumo financeiro**
+- **Given** que o usuário está autenticado e possui transações registradas
+- **When** ele acessa `GET /api/dashboard`
+- **Then** a resposta contém `total_receitas`, `total_despesas`, `saldo` e `gastos_por_categoria` calculados corretamente
+
+**Cenário 2 — Dashboard sem transações**
+- **Given** que o usuário não possui nenhuma transação cadastrada
+- **When** ele acessa o dashboard
+- **Then** todos os totais retornam zero e `gastos_por_categoria` retorna objeto vazio, sem erros
+
+**Cenário 3 — Isolamento de dados entre usuários**
+- **Given** que dois usuários diferentes estão autenticados simultaneamente
+- **When** cada um acessa seu dashboard
+- **Then** cada resposta exibe apenas as transações vinculadas ao `user_id` do próprio token, sem vazamento de dados entre contas
+
 **Rastreabilidade**
 
 | Issue / PR | Código | Testes automatizados |

@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { vi } from "vitest";
 
@@ -7,8 +7,14 @@ import Dashboard from "../Dashboard";
 
 describe("Testes com Mock - ByteBank", () => {
 
-  test("deve chamar irDashboard após login válido", () => {
-    vi.useFakeTimers();
+  test("deve chamar irDashboard após login válido", async () => {
+    // Mock do fetch para simular resposta bem-sucedida da API
+    global.fetch = vi.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ token: "fake-jwt-token" }),
+      })
+    );
 
     const irDashboardMock = vi.fn();
     const mudarTelaMock = vi.fn();
@@ -30,11 +36,11 @@ describe("Testes com Mock - ByteBank", () => {
 
     fireEvent.click(screen.getByText("Entrar"));
 
-    vi.runAllTimers();
+    await waitFor(() => {
+      expect(irDashboardMock).toHaveBeenCalled();
+    });
 
-    expect(irDashboardMock).toHaveBeenCalled();
-
-    vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   test("deve chamar sair ao clicar no botão sair do dashboard", () => {

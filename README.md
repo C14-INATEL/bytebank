@@ -131,6 +131,13 @@ ByteBank/
 - **When** ele envia `PUT /api/transactions/:id` com os campos a alterar
 - **Then** apenas os campos enviados são atualizados e o sistema retorna o documento atualizado com HTTP 200
 
+
+**Rastreabilidade**
+
+| Issue / PR | Código | Testes automatizados |
+|------------|--------|----------------------|
+| #7 — CRUD de transações | `services.py → TransactionService` | `TestTransactionService`, `TestRotaTransacoes` |
+
 ### US-03 — Dashboard financeiro com resumo e categorias
 
 > Como **usuário autenticado**, eu quero visualizar meu saldo atual, total de receitas, total de despesas e gastos por categoria para que eu entenda rapidamente minha situação financeira.
@@ -161,7 +168,7 @@ ByteBank/
 
 | Issue / PR | Código | Testes automatizados |
 |------------|--------|----------------------|
-| #7 — CRUD de transações | `services.py → TransactionService` | `TestTransactionService`, `TestRotaTransacoes` |
+| #11 — Endpoint de dashboard | `services.py → get_dashboard` | `TestRotaDashboard` |
 
 ---
 

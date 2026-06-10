@@ -1,70 +1,106 @@
-stages:
-  - test
+# ╔══════════════════════════════════════════════════════════════╗
+# ║              ByteBank — Pipeline GitLab CI                  ║
+# ╚══════════════════════════════════════════════════════════════╝
 
-# ─────────────────────────────────────────────
-# Job 1 — Testes unitários do Backend (pytest)
-# ─────────────────────────────────────────────
+stages:
+  - install
+  - test
+  - build
+  - package
+  - deploy
+  - notify
+
+# ──────────────────────────────────────────────────────────────
+# STAGE 1 — INSTALAÇÃO DE DEPENDÊNCIAS
+# ──────────────────────────────────────────────────────────────
+
+install-backend:
+  stage: install
+  image: python:3.11-slim
+  script:
+    - echo "📦 Instalando dependências do Backend..."
+    - pip install --upgrade pip
+    - pip install -r requirements.txt
+    - pip install pytest pytest-cov flask-cors
+    - echo "✅ Dependências do Backend instaladas com sucesso."
+  cache:
+    key: backend-deps-$CI_COMMIT_REF_SLUG
+    paths:
+      - .pip-cache/
+
+install-frontend:
+  stage: install
+  image: node:20-slim
+  script:
+    - echo "📦 Instalando dependências do Frontend..."
+    - cd Frontend
+    - npm ci
+    - echo "✅ Dependências do Frontend instaladas com sucesso."
+  cache:
+    key: frontend-deps-$CI_COMMIT_REF_SLUG
+    paths:
+      - Frontend/node_modules/
+
+# ──────────────────────────────────────────────────────────────
+# STAGE 2 — TESTES
+# ──────────────────────────────────────────────────────────────
+
 backend-tests:
   stage: test
   image: python:3.11-slim
   before_script:
-    - pip install --upgrade pip
-    - pip install -r requirements.txt
-    - pip install pytest pytest-cov flask-cors
+    - echo "🧪 Preparando ambiente de testes do Backend..."
+    - pip install --upgrade pip -q
+    - pip install -r requirements.txt -q
+    - pip install pytest pytest-cov flask-cors -q
   script:
+    - echo "▶ Executando testes unitários do Backend (pytest)..."
     - cd Backend
-    - PYTHONPATH=. python -m pytest app/testes/test_funcoes.py -v --tb=short --junitxml=report-backend.xml
+    - PYTHONPATH=. python -m pytest app/testes/test_funcoes.py -v --tb=short
+        --junitxml=report-backend.xml
+        --cov=app --cov-report=term-missing --cov-report=xml:coverage-backend.xml
+    - echo "✅ Testes do Backend concluídos."
   artifacts:
     when: always
     reports:
       junit: Backend/report-backend.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: Backend/coverage-backend.xml
     paths:
       - Backend/report-backend.xml
-    expire_in: 7 days
+      - Backend/coverage-backend.xml
+    expire_in: 14 days
+  coverage: '/TOTAL.*\s+(\d+%)$/'
 
-# ──────────────────────────────────────────────
-# Job 2 — Testes unitários do Frontend (vitest)
-# ──────────────────────────────────────────────
-frontend-tests:
-  stage: test
-  image: node:20-slim
-  before_script:
-    - cd Frontend
-    - npm ci
-  script:
-    - npm test -- --run --reporter=verbose
-  artifacts:
-    when: always
-    paths:
-      - Frontend/test-results/
-    expire_in: 7 days
-
-# ──────────────────────────────────────────────
-# Job 3 — Lint do Frontend (ESLint)
-# ──────────────────────────────────────────────
 frontend-lint:
   stage: test
   image: node:20-slim
   before_script:
+    - echo "🔍 Preparando lint do Frontend..."
     - cd Frontend
-    - npm ci
+    - npm ci --silent
   script:
+    - echo "▶ Executando ESLint..."
     - npm run lint
+    - echo "✅ Lint do Frontend sem erros."
   allow_failure: false
 
-# ──────────────────────────────────────────────
-# Job 4 — Build do Frontend
-# ──────────────────────────────────────────────
-frontend-build:
+frontend-tests:
   stage: test
   image: node:20-slim
   before_script:
+    - echo "🧪 Preparando testes do Frontend..."
     - cd Frontend
-    - npm ci
+    - npm ci --silent
   script:
-    - npm run build
+    - echo "▶ Executando testes do Frontend (vitest)..."
+    - npm test -- --run --reporter=verbose --reporter=junit --outputFile=report-frontend.xml
+    - echo "✅ Testes do Frontend concluídos."
   artifacts:
     when: always
+    reports:
+      junit: Frontend/report-frontend.xml
     paths:
-      - Frontend/dist/
-    expire_in: 7 days
+      - Frontend/report-frontend.xml
+    expire_in: 14 days

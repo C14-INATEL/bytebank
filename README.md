@@ -380,12 +380,22 @@ Todos os endpoints abaixo exigem o header `Authorization: Bearer <token>`, excet
 
 ## 🔄 Pipeline CI/CD (GitLab CI)
 
-O arquivo `.gitlab-ci.yml` na raiz define o pipeline com dois jobs executados automaticamente a cada push:
+O arquivo `.gitlab-ci.yml` define o pipeline com **6 stages** e **10 jobs** executados automaticamente a cada push:
 
-| Job                | Imagem               | O que faz                               |
-| ------------------ | -------------------- | --------------------------------------- |
-| `backend-tests`  | `python:3.11-slim` | Instala dependências e roda `pytest` |
-| `frontend-tests` | `node:20-slim`     | Instala dependências e roda `vitest` |
+| Stage | Job | O que faz |
+|-------|-----|-----------|
+| `install` | `install-backend` | Instala dependências Python via pip |
+| `install` | `install-frontend` | Instala dependências Node via npm ci |
+| `test` | `backend-tests` | Roda pytest com cobertura e exporta relatório JUnit |
+| `test` | `frontend-lint` | Valida código com ESLint |
+| `test` | `frontend-tests` | Roda vitest e exporta relatório JUnit |
+| `build` | `frontend-build` | Gera build de produção com Vite |
+| `build` | `backend-validate` | Valida inicialização do Flask |
+| `package` | `package-backend` | Empacota backend em `.tar.gz` com hash do commit |
+| `package` | `package-frontend` | Empacota frontend (dist) em `.tar.gz` |
+| `deploy` | `deploy-simulation` | Simula deploy completo (apenas na branch `main`) |
+| `notify` | `notify-success` | Exibe resumo de sucesso ao fim do pipeline |
+| `notify` | `notify-failure` | Exibe diagnóstico de falha quando algum job falha |
 
 ---
 

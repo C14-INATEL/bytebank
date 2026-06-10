@@ -330,6 +330,76 @@ Em vez de sprints formais, o grupo operou em *ciclos semanais informais*: a cada
 | Média de issues fechadas por ciclo semanal | [Nº] |
 | Cobertura de testes (backend) | [XX%] |
 
+---
+
+## 🔁 Dinâmica de Desenvolvimento
+
+### Como o trabalho aconteceu na prática
+
+O desenvolvimento foi dividido em duas frentes paralelas desde o início: **backend** (Flask + MongoDB) e **frontend** (React + Vite). Essa separação evitou conflitos frequentes de código e permitiu que cada dupla avançasse de forma independente, integrando via API REST.
+
+As decisões técnicas foram tomadas coletivamente nas reuniões semanais do Discord. Quando surgiam dúvidas ou bloqueios no meio da semana, o canal de texto servia para resolver rapidamente sem precisar esperar a próxima reunião.
+
+---
+
+### Divisão de tarefas
+
+| Área | Integrante(s) | Principais entregas |
+|------|------------|---------------------|
+| Backend — modelos e banco | `[Henrique]` | `models.py`, conexão MongoDB, estrutura de dados |
+| Backend — serviços e regras de negócio | `[Felipe]` | `services.py`, validações, lógica de transações e dashboard |
+| Backend — rotas e autenticação | `[Henrique]` | `routes.py`, middleware JWT, endpoints REST |
+| Frontend — telas e componentes | `[Luis Otávio]` | `Login.jsx`, `Cadastro.jsx`, `Dashboard.jsx` |
+| Testes unitários | `[Felipe, Henrique e Luis Otávio]` | `test_funcoes.py`, testes vitest |
+| Pipeline CI/CD | `[Felipe, Henrique e Luis Otávio]` | `.gitlab-ci.yml`, stages e jobs |
+
+---
+
+### Fluxo de branches e padrão de commitsx
+
+O grupo adotou o seguinte fluxo de branches:
+
+- `main` — branch principal, sempre estável e com pipeline passando
+- `feature/[nome-da-funcionalidade]` — criada para cada nova funcionalidade (ex: `feature/autenticacao-jwt`, `feature/crud-transacoes`)
+- `fix/[descricao]` — para correções de bugs identificados
+
+**Padrão de commits** adotado:
+
+| Prefixo | Uso |
+|---------|-----|
+| `feat:` | Nova funcionalidade |
+| `fix:` | Correção de bug |
+| `test:` | Adição ou ajuste de testes |
+| `docs:` | Alterações em documentação |
+| `ci:` | Mudanças no pipeline |
+| `refactor:` | Refatoração sem mudança de comportamento |
+
+**Processo de code review:** todo merge para a `main` era feito via pull request, com revisão obrigatória de ao menos um outro membro antes do merge.
+
+---
+
+### O que funcionou bem
+
+- A separação backend/frontend desde o início eliminou a maioria dos conflitos de merge
+- O uso de issues no GitLab manteve as tarefas visíveis para todos
+- Os testes unitários do backend (pytest) ajudaram a identificar bugs de lógica antes da integração
+- O pipeline automatizado deu confiança para mergear sem quebrar o projeto
+
+---
+
+### O que travou
+
+- **Integração frontend ↔ backend:** os primeiros testes de integração falharam por problemas de CORS e diferenças no formato de resposta da API — resolvido adicionando `flask-cors` e padronizando os campos retornados
+- **Configuração do MongoDB Atlas:** a criação do cluster e a liberação de IPs levou mais tempo do que esperado no início do projeto
+
+---
+
+### Lições aprendidas
+
+- **Usar variáveis de ambiente desde o primeiro commit** — hardcodar credenciais no código gerou retrabalho e um risco de segurança real que precisou ser corrigido
+- **Escrever testes junto com o código**, não depois — as funcionalidades testadas desde cedo tiveram menos regressões durante a integração
+- **Commits menores e mais frequentes** facilitam o code review e tornam o histórico mais legível
+- **Documentar decisões técnicas** (mesmo que brevemente na issue) ajuda quando outro membro precisa entender o contexto semanas depois
 
 ---
 

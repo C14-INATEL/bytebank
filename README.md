@@ -171,6 +171,39 @@ ByteBank/
 | #11 — Endpoint de dashboard | `services.py → get_dashboard` | `TestRotaDashboard` |
 
 ---
+### US-04 — Cadastro de novo usuário
+
+> Como **visitante**, eu quero criar uma conta com nome, email e senha para que eu possa acessar o ByteBank e começar a gerenciar minhas finanças.
+
+| Campo       | Valor                          |
+|-------------|--------------------------------|
+| Prioridade  | Alta                           |
+| Status      | Entregue                       |
+
+**Critérios de aceitação**
+
+**Cenário 1 — Cadastro com dados válidos**
+- **Given** que o visitante preenche nome, email válido e senha na tela de cadastro
+- **When** ele confirma o cadastro via `POST /api/users`
+- **Then** o sistema cria a conta, armazena a senha como hash (nunca em texto puro) e retorna HTTP 201 com os dados do usuário criado
+
+**Cenário 2 — Email já cadastrado**
+- **Given** que já existe uma conta com o email informado
+- **When** outro visitante tenta se cadastrar com o mesmo email
+- **Then** a API retorna HTTP 409 com mensagem de email já cadastrado, sem criar duplicata
+
+**Cenário 3 — Campos obrigatórios ausentes**
+- **Given** que o visitante envia o formulário sem preencher todos os campos obrigatórios
+- **When** o backend recebe a requisição incompleta
+- **Then** a API retorna HTTP 400 indicando os campos faltantes, sem criar nenhum registro
+
+**Rastreabilidade**
+
+| Issue / PR | Código | Testes automatizados |
+|------------|--------|----------------------|
+| #2 — Cadastro de usuário | `services.py → criar_usuario` / `routes.py → POST /api/users` | `TestUserModel`, `TestUserService`, `TestRotaUsuarios` |
+
+---
 
 ## 🛠️ Tecnologias Utilizadas
 

@@ -239,6 +239,40 @@ ByteBank/
 
 ---
 
+### US-06 — Histórico de transações
+
+> Como **usuário autenticado**, eu quero visualizar a lista completa das minhas transações para que eu possa acompanhar todos os meus lançamentos financeiros em um só lugar.
+
+| Campo       | Valor      |
+|-------------|------------|
+| Prioridade  | Média      |
+| Status      | Entregue   |
+
+**Critérios de aceitação**
+
+**Cenário 1 — Listagem com transações existentes**
+- **Given** que o usuário está autenticado e possui transações registradas
+- **When** ele acessa `GET /api/transactions` com token válido
+- **Then** a API retorna HTTP 200 com a lista de todas as suas transações, incluindo tipo, categoria, valor, descrição e data de cada registro
+
+**Cenário 2 — Listagem sem transações**
+- **Given** que o usuário não possui nenhuma transação cadastrada
+- **When** ele acessa o histórico
+- **Then** a API retorna HTTP 200 com uma lista vazia, sem erros
+
+**Cenário 3 — Isolamento entre usuários**
+- **Given** que dois usuários distintos possuem transações cadastradas
+- **When** cada um lista seu histórico
+- **Then** cada resposta contém apenas as transações vinculadas ao `user_id` do próprio token, garantindo isolamento total entre contas
+
+**Rastreabilidade**
+
+| Issue / PR | Código | Testes automatizados |
+|------------|--------|----------------------|
+| #9 — Listagem de transações | `services.py → listar_transacoes` / `routes.py → GET /api/transactions` | `TestTransactionService` → `test_listar_transacoes_retorna_lista`, `test_listar_transacoes_usuario_sem_transacoes`, `test_listar_transacoes_ids_sao_strings` |
+
+---
+
 ## 🛠️ Tecnologias Utilizadas
 
 ### 🎨 Frontend

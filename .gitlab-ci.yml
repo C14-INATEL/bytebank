@@ -104,3 +104,75 @@ frontend-tests:
     paths:
       - Frontend/report-frontend.xml
     expire_in: 14 days
+
+# ──────────────────────────────────────────────────────────────
+# STAGE 3 — BUILD / VALIDAÇÃO
+# ──────────────────────────────────────────────────────────────
+
+frontend-build:
+  stage: build
+  image: node:20-slim
+  before_script:
+    - echo "🏗️  Preparando build do Frontend..."
+    - cd Frontend
+    - npm ci --silent
+  script:
+    - echo "▶ Executando build de produção (vite build)..."
+    - npm run build
+    - echo "✅ Build do Frontend gerado com sucesso em Frontend/dist/"
+  artifacts:
+    when: on_success
+    paths:
+      - Frontend/dist/
+    expire_in: 14 days
+
+backend-validate:
+  stage: build
+  image: python:3.11-slim
+  before_script:
+    - pip install --upgrade pip -q
+    - pip install -r requirements.txt -q
+    - pip install flask-cors -q
+  script:
+    - echo "▶ Validando inicialização do Backend (Flask)..."
+    - python -c "from Backend.app import create_app; app = create_app(); print('✅ Backend inicializado com sucesso.')"
+  allow_failure: true
+
+# ──────────────────────────────────────────────────────────────
+# STAGE 4 — EMPACOTAMENTO / ARTEFATOS
+# ──────────────────────────────────────────────────────────────
+
+package-backend:
+  stage: package
+  image: python:3.11-slim
+  before_script:
+    - pip install --upgrade pip -q
+    - pip install build wheel -q
+  script:
+    - echo "📦 Empacotando Backend..."
+    - mkdir -p dist-backend
+    - cp -r Backend dist-backend/
+    - cp requirements.txt dist-backend/
+    - cp run.py dist-backend/
+    - tar -czf bytebank-backend-$CI_COMMIT_SHORT_SHA.tar.gz dist-backend/
+    - echo "✅ Pacote do Backend gerado: bytebank-backend-$CI_COMMIT_SHORT_SHA.tar.gz"
+  artifacts:
+    when: on_success
+    paths:
+      - bytebank-backend-*.tar.gz
+    expire_in: 14 days
+
+package-frontend:
+  stage: package
+  image: node:20-slim
+  dependencies:
+    - frontend-build
+  script:
+    - echo "📦 Empacotando Frontend (dist)..."
+    - tar -czf bytebank-frontend-$CI_COMMIT_SHORT_SHA.tar.gz Frontend/dist/
+    - echo "✅ Pacote do Frontend gerado: bytebank-frontend-$CI_COMMIT_SHORT_SHA.tar.gz"
+  artifacts:
+    when: on_success
+    paths:
+      - bytebank-frontend-*.tar.gz
+    expire_in: 14 days

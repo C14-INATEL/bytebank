@@ -190,10 +190,10 @@ deploy-simulation:
   script:
     - echo " Iniciando simulação de deploy do ByteBank..."
     - echo "──────────────────────────────────────────"
-    - echo "  Branch   : $CI_COMMIT_REF_NAME"
-    - echo "  Commit   : $CI_COMMIT_SHORT_SHA"
-    - echo "  Pipeline : $CI_PIPELINE_ID"
-    - echo "  Autor    : $CI_COMMIT_AUTHOR"
+    - 'echo "Branch - $CI_COMMIT_REF_NAME"'
+    - 'echo "Commit - $CI_COMMIT_SHORT_SHA"'
+    - 'echo "Pipeline - $CI_PIPELINE_ID"'
+    - 'echo "Autor - $CI_COMMIT_AUTHOR"'
     - echo "──────────────────────────────────────────"
     - echo "▶ [1/4] Verificando pacotes gerados..."
     - ls -lh bytebank-backend-*.tar.gz bytebank-frontend-*.tar.gz
@@ -225,12 +225,12 @@ notify-success:
     - echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     - echo "    PIPELINE CONCLUÍDA COM SUCESSO"
     - echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    - echo "  Projeto  : ByteBank"
-    - echo "  Branch   : $CI_COMMIT_REF_NAME"
-    - echo "  Commit   : $CI_COMMIT_SHORT_SHA"
-    - echo "  Pipeline : $CI_PIPELINE_ID"
-    - echo "  Autor    : $CI_COMMIT_AUTHOR"
-    - echo "  Hora     : $(date '+%d/%m/%Y %H:%M:%S')"
+    - 'echo "Projeto - ByteBank"'
+    - 'echo "Branch - $CI_COMMIT_REF_NAME"'
+    - 'echo "Commit - $CI_COMMIT_SHORT_SHA"'
+    - 'echo "Pipeline - $CI_PIPELINE_ID"'
+    - 'echo "Autor - $CI_COMMIT_AUTHOR"'
+    - 'echo "Hora - $(date +%d/%m/%Y-%H:%M:%S)"'
     - echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     - echo "  Todos os stages foram executados com êxito."
     - echo "  O ByteBank está pronto para deploy."
@@ -244,12 +244,12 @@ notify-failure:
     - echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     - echo "    PIPELINE FALHOU"
     - echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    - echo "  Projeto  : ByteBank"
-    - echo "  Branch   : $CI_COMMIT_REF_NAME"
-    - echo "  Commit   : $CI_COMMIT_SHORT_SHA"
-    - echo "  Pipeline : $CI_PIPELINE_ID"
-    - echo "  Autor    : $CI_COMMIT_AUTHOR"
-    - echo "  Hora     : $(date '+%d/%m/%Y %H:%M:%S')"
+    - 'echo "Projeto - ByteBank"'
+    - 'echo "Branch - $CI_COMMIT_REF_NAME"'
+    - 'echo "Commit - $CI_COMMIT_SHORT_SHA"'
+    - 'echo "Pipeline - $CI_PIPELINE_ID"'
+    - 'echo "Autor - $CI_COMMIT_AUTHOR"'
+    - 'echo "Hora - $(date +%d/%m/%Y-%H:%M:%S)"'
     - echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     - echo "    Verifique os logs acima para identificar"
     - echo "  o job que falhou e corrija antes do próximo push."

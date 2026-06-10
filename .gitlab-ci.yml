@@ -176,3 +176,82 @@ package-frontend:
     paths:
       - bytebank-frontend-*.tar.gz
     expire_in: 14 days
+
+# ──────────────────────────────────────────────────────────────
+# STAGE 5 — SIMULAÇÃO DE DEPLOY
+# ──────────────────────────────────────────────────────────────
+
+deploy-simulation:
+  stage: deploy
+  image: alpine:latest
+  dependencies:
+    - package-backend
+    - package-frontend
+  script:
+    - echo " Iniciando simulação de deploy do ByteBank..."
+    - echo "──────────────────────────────────────────"
+    - echo "  Branch   : $CI_COMMIT_REF_NAME"
+    - echo "  Commit   : $CI_COMMIT_SHORT_SHA"
+    - echo "  Pipeline : $CI_PIPELINE_ID"
+    - echo "  Autor    : $CI_COMMIT_AUTHOR"
+    - echo "──────────────────────────────────────────"
+    - echo "▶ [1/4] Verificando pacotes gerados..."
+    - ls -lh bytebank-backend-*.tar.gz bytebank-frontend-*.tar.gz
+    - echo "▶ [2/4] Simulando extração dos pacotes no servidor..."
+    - mkdir -p /tmp/deploy/backend /tmp/deploy/frontend
+    - tar -xzf bytebank-backend-*.tar.gz -C /tmp/deploy/backend
+    - tar -xzf bytebank-frontend-*.tar.gz -C /tmp/deploy/frontend
+    - echo "▶ [3/4] Simulando configuração de variáveis de ambiente..."
+    - echo "  FLASK_ENV=production"
+    - echo "  MONGO_URI=<configurado via variável secreta>"
+    - echo "  SECRET_KEY=<configurado via variável secreta>"
+    - echo "▶ [4/4] Simulação de deploy concluída."
+    - echo " ByteBank estaria disponível em https://bytebank.example.com"
+  environment:
+    name: staging
+    url: https://bytebank.example.com
+  only:
+    - main
+
+# ──────────────────────────────────────────────────────────────
+# STAGE 6 — NOTIFICAÇÕES DE STATUS
+# ──────────────────────────────────────────────────────────────
+
+notify-success:
+  stage: notify
+  image: alpine:latest
+  when: on_success
+  script:
+    - echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    - echo "    PIPELINE CONCLUÍDA COM SUCESSO"
+    - echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    - echo "  Projeto  : ByteBank"
+    - echo "  Branch   : $CI_COMMIT_REF_NAME"
+    - echo "  Commit   : $CI_COMMIT_SHORT_SHA"
+    - echo "  Pipeline : $CI_PIPELINE_ID"
+    - echo "  Autor    : $CI_COMMIT_AUTHOR"
+    - echo "  Hora     : $(date '+%d/%m/%Y %H:%M:%S')"
+    - echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    - echo "  Todos os stages foram executados com êxito."
+    - echo "  O ByteBank está pronto para deploy."
+    - echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+notify-failure:
+  stage: notify
+  image: alpine:latest
+  when: on_failure
+  script:
+    - echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    - echo "    PIPELINE FALHOU"
+    - echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    - echo "  Projeto  : ByteBank"
+    - echo "  Branch   : $CI_COMMIT_REF_NAME"
+    - echo "  Commit   : $CI_COMMIT_SHORT_SHA"
+    - echo "  Pipeline : $CI_PIPELINE_ID"
+    - echo "  Autor    : $CI_COMMIT_AUTHOR"
+    - echo "  Hora     : $(date '+%d/%m/%Y %H:%M:%S')"
+    - echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    - echo "    Verifique os logs acima para identificar"
+    - echo "  o job que falhou e corrija antes do próximo push."
+    - echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    - exit 1    

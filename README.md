@@ -205,6 +205,40 @@ ByteBank/
 
 ---
 
+### US-05 — Exclusão de transação
+
+> Como **usuário autenticado**, eu quero excluir uma transação registrada por engano para que meu histórico financeiro reflita apenas lançamentos corretos.
+
+| Campo       | Valor                          |
+|-------------|--------------------------------|
+| Prioridade  | Média                          |
+| Status      | Entregue                       |
+
+**Critérios de aceitação**
+
+**Cenário 1 — Exclusão de transação existente**
+- **Given** que o usuário autenticado possui uma transação existente com `id` conhecido
+- **When** ele envia `DELETE /api/transactions/:id` com token válido
+- **Then** a transação é removida do banco, a API retorna HTTP 200 e o item desaparece do histórico
+
+**Cenário 2 — Exclusão de transação inexistente**
+- **Given** que o usuário tenta excluir uma transação com `id` inexistente ou já deletado
+- **When** o backend processa o `DELETE`
+- **Then** a API retorna HTTP 404 com mensagem "Transação não encontrada", sem lançar exceção
+
+**Cenário 3 — Exclusão de transação de outro usuário**
+- **Given** que um usuário autenticado tenta excluir uma transação que pertence a outro usuário
+- **When** o backend valida o `user_id` do token contra o dono do registro
+- **Then** a API retorna HTTP 403 e a transação permanece intacta no banco
+
+**Rastreabilidade**
+
+| Issue / PR | Código | Testes automatizados |
+|------------|--------|----------------------|
+| #8 — Exclusão de transação | `services.py → deletar_transacao` / `routes.py → DELETE /api/transactions/:id` | `TestTransactionService` → `test_deletar_transacao_existente`, `test_deletar_transacao_inexistente` |
+
+---
+
 ## 🛠️ Tecnologias Utilizadas
 
 ### 🎨 Frontend

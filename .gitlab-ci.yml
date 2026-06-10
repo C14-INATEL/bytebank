@@ -155,7 +155,7 @@ package-backend:
     - cp requirements.txt dist-backend/
     - cp run.py dist-backend/
     - tar -czf bytebank-backend-$CI_COMMIT_SHORT_SHA.tar.gz dist-backend/
-    - echo "✅ Pacote do Backend gerado: bytebank-backend-$CI_COMMIT_SHORT_SHA.tar.gz"
+    - echo "✅ Pacote do Backend gerado bytebank-backend-$CI_COMMIT_SHORT_SHA.tar.gz"
   artifacts:
     when: on_success
     paths:

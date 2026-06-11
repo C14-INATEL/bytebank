@@ -152,8 +152,8 @@ function Dashboard({ sair }) {
       carregarTransacoes();
     } catch (err) { setErro("Erro de conexão: " + err.message); }
   };
-
-  const editarTransacao = (item) => {
+       // ──Editar transação
+   const editarTransacao = (item) => {
     setDescricao(item.description || "");
     setValor(String(item.amount));
     setTipo(item.type || "receita");
@@ -162,7 +162,7 @@ function Dashboard({ sair }) {
     setErro("");
     setAbaSidebar("dashboard");
   };
-
+         // ── remover transação
   const removerTransacao = async (id) => {
     if (!confirm("Deseja remover esta transação?")) return;
     try {
@@ -174,7 +174,8 @@ function Dashboard({ sair }) {
       carregarTransacoes();
     } catch (err) { setErro("Erro de conexão: " + err.message); }
   };
-
+   
+  // ──deslogar
   const handleSair = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
@@ -522,56 +523,312 @@ function Dashboard({ sair }) {
 }
 
 const styles = {
-  page: { minHeight: "100vh", display: "flex", background: "#0f172a", color: "#fff", fontFamily: "Arial, sans-serif" },
-  sidebar: { width: "230px", background: "#020617", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "space-between", flexShrink: 0 },
-  sidebarLogo: { color: "#22c55e", marginBottom: "35px" },
-  menuTitle: { color: "#64748b", fontSize: "12px", marginTop: "25px" },
-  menuActive: { width: "100%", background: "#1e293b", color: "#fff", border: "1px solid #334155", borderRadius: "10px", padding: "12px", textAlign: "left", marginBottom: "8px", cursor: "pointer" },
-  menuItem: { width: "100%", background: "transparent", color: "#94a3b8", border: "none", borderRadius: "10px", padding: "12px", textAlign: "left", marginBottom: "6px", cursor: "pointer" },
-  logoutButton: { background: "#ef4444", color: "#fff", border: "none", borderRadius: "10px", padding: "12px", cursor: "pointer", fontWeight: "bold" },
-  main: { flex: 1, padding: "28px", overflow: "auto" },
-  header: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px", gap: "20px" },
-  welcome: { margin: 0, fontSize: "28px" },
-  subtitle: { color: "#94a3b8", marginTop: "6px" },
-  search: { width: "260px", background: "#1e293b", color: "#fff", border: "1px solid #334155", borderRadius: "10px", padding: "12px", outline: "none" },
-  cards: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: "18px", marginBottom: "22px" },
-  card: { background: "#1e293b", border: "1px solid #334155", borderRadius: "18px", padding: "20px", boxShadow: "0 10px 25px rgba(0,0,0,0.25)" },
-  cardLabel: { color: "#94a3b8", margin: "0 0 18px" },
-  greenText: { color: "#22c55e", fontSize: "26px", margin: 0 },
-  redText: { color: "#ef4444", fontSize: "26px", margin: 0 },
-  whiteText: { color: "#fff", fontSize: "26px", margin: 0 },
-  smallText: { color: "#94a3b8", fontSize: "13px" },
-  smallGreen: { color: "#86efac", fontSize: "13px" },
-  smallRed: { color: "#fca5a5", fontSize: "13px" },
-  grid: { display: "grid", gridTemplateColumns: "1.4fr 0.9fr", gap: "20px" },
-  panel: { background: "#1e293b", border: "1px solid #334155", borderRadius: "18px", padding: "20px", boxShadow: "0 10px 25px rgba(0,0,0,0.25)" },
-  panelLarge: { background: "#1e293b", border: "1px solid #334155", borderRadius: "18px", padding: "20px", boxShadow: "0 10px 25px rgba(0,0,0,0.25)" },
-  fullPanel: { background: "#1e293b", border: "1px solid #334155", borderRadius: "18px", padding: "24px", boxShadow: "0 10px 25px rgba(0,0,0,0.25)" },
-  chartPanel: { background: "#0f172a", border: "1px solid #334155", borderRadius: "14px", padding: "20px" },
-  panelHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" },
-  panelTitle: { marginTop: 0 },
-  badge: { background: "#334155", color: "#cbd5e1", padding: "8px 12px", borderRadius: "10px", fontSize: "13px" },
-  creditCard: { background: "linear-gradient(135deg, #22c55e, #14b8a6)", borderRadius: "18px", padding: "22px", minHeight: "150px", display: "flex", flexDirection: "column", justifyContent: "space-between", marginBottom: "16px" },
-  cardBank: { fontWeight: "bold", letterSpacing: "1px" },
-  cardNumber: { fontSize: "20px", fontWeight: "bold" },
-  cardBottom: { display: "flex", justifyContent: "space-between", fontSize: "13px" },
-  addCardButton: { width: "100%", background: "#334155", color: "#fff", border: "none", borderRadius: "10px", padding: "12px", cursor: "pointer" },
-  form: { display: "flex", flexDirection: "column", gap: "10px" },
-  input: { background: "#334155", color: "#fff", border: "none", borderRadius: "10px", padding: "12px", outline: "none" },
-  error: { color: "#ef4444", minHeight: "20px", fontSize: "14px" },
-  primaryButton: { background: "#22c55e", color: "#fff", border: "none", borderRadius: "10px", padding: "12px", cursor: "pointer", fontWeight: "bold" },
-  secondaryButton: { background: "#475569", color: "#fff", border: "none", borderRadius: "10px", padding: "12px", cursor: "pointer", fontWeight: "bold" },
-  transactions: { display: "flex", flexDirection: "column", gap: "10px", marginTop: "10px" },
-  transactionRow: { display: "flex", justifyContent: "space-between", alignItems: "center", background: "#334155", borderRadius: "14px", padding: "14px", gap: "12px" },
-  transactionTitle: { margin: 0, fontWeight: "bold" },
-  transactionType: { margin: "4px 0 0", color: "#cbd5e1", fontSize: "13px" },
-  transactionActions: { display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" },
-  greenTextSmall: { color: "#22c55e" },
-  redTextSmall: { color: "#ef4444" },
-  editButton: { background: "#3b82f6", color: "#fff", border: "none", borderRadius: "8px", padding: "8px 10px", cursor: "pointer" },
-  removeButton: { background: "#475569", color: "#fff", border: "none", borderRadius: "10px", padding: "8px 10px", cursor: "pointer" },
-  legend: { display: "flex", justifyContent: "center", gap: "18px" },
-  legendItem: { color: "#cbd5e1", fontSize: "13px" },
+  page: {
+    minHeight: "100vh",
+    display: "flex",
+    background: "#0f172a",
+    color: "#fff",
+    fontFamily: "Arial, sans-serif"
+  },
+  sidebar: {
+    width: "230px",
+    background: "#020617",
+    padding: "24px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    flexShrink: 0
+  },
+  sidebarLogo: {
+    color: "#22c55e",
+    marginBottom: "35px"
+  },
+  menuTitle: {
+    color: "#64748b",
+    fontSize: "12px",
+    marginTop: "25px"
+  },
+  menuActive: {
+    width: "100%",
+    background: "#1e293b",
+    color: "#fff",
+    border: "1px solid #334155",
+    borderRadius: "10px",
+    padding: "12px",
+    textAlign: "left",
+    marginBottom: "8px",
+    cursor: "pointer"
+  },
+  menuItem: {
+    width: "100%",
+    background: "transparent",
+    color: "#94a3b8",
+    border: "none",
+    borderRadius: "10px",
+    padding: "12px",
+    textAlign: "left",
+    marginBottom: "6px",
+    cursor: "pointer"
+  },
+  logoutButton: {
+    background: "#ef4444",
+    color: "#fff",
+    border: "none",
+    borderRadius: "10px",
+    padding: "12px",
+    cursor: "pointer",
+    fontWeight: "bold"
+  },
+  main: {
+    flex: 1,
+    padding: "28px",
+    overflow: "auto"
+  },
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "25px",
+    gap: "20px"
+  },
+  welcome: {
+    margin: 0,
+    fontSize: "28px"
+  },
+  subtitle: {
+    color: "#94a3b8",
+    marginTop: "6px"
+  },
+  search: {
+    width: "260px",
+    background: "#1e293b",
+    color: "#fff",
+    border: "1px solid #334155",
+    borderRadius: "10px",
+    padding: "12px",
+    outline: "none"
+  },
+  cards: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
+    gap: "18px",
+    marginBottom: "22px"
+  },
+  card: {
+    background: "#1e293b",
+    border: "1px solid #334155",
+    borderRadius: "18px",
+    padding: "20px",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.25)"
+  },
+  cardLabel: {
+    color: "#94a3b8",
+    margin: "0 0 18px"
+  },
+  greenText: {
+    color: "#22c55e",
+    fontSize: "26px",
+    margin: 0
+  },
+  redText: {
+    color: "#ef4444",
+    fontSize: "26px",
+    margin: 0
+  },
+  whiteText: {
+    color: "#fff",
+    fontSize: "26px",
+    margin: 0
+  },
+  smallText: {
+    color: "#94a3b8",
+    fontSize: "13px"
+  },
+  smallGreen: {
+    color: "#86efac",
+    fontSize: "13px"
+  },
+  smallRed: {
+    color: "#fca5a5",
+    fontSize: "13px"
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "1.4fr 0.9fr",
+    gap: "20px"
+  },
+  panel: {
+    background: "#1e293b",
+    border: "1px solid #334155",
+    borderRadius: "18px",
+    padding: "20px",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.25)"
+  },
+  panelLarge: {
+    background: "#1e293b",
+    border: "1px solid #334155",
+    borderRadius: "18px",
+    padding: "20px",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.25)"
+  },
+  fullPanel: {
+    background: "#1e293b",
+    border: "1px solid #334155",
+    borderRadius: "18px",
+    padding: "24px",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.25)"
+  },
+  chartPanel: {
+    background: "#0f172a",
+    border: "1px solid #334155",
+    borderRadius: "14px",
+    padding: "20px"
+  },
+  panelHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "8px"
+  },
+  panelTitle: {
+    marginTop: 0
+  },
+  badge: {
+    background: "#334155",
+    color: "#cbd5e1",
+    padding: "8px 12px",
+    borderRadius: "10px",
+    fontSize: "13px"
+  },
+  creditCard: {
+    background: "linear-gradient(135deg, #22c55e, #14b8a6)",
+    borderRadius: "18px",
+    padding: "22px",
+    minHeight: "150px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    marginBottom: "16px"
+  },
+  cardBank: {
+    fontWeight: "bold",
+    letterSpacing: "1px"
+  },
+  cardNumber: {
+    fontSize: "20px",
+    fontWeight: "bold"
+  },
+  cardBottom: {
+    display: "flex",
+    justifyContent: "space-between",
+    fontSize: "13px"
+  },
+  addCardButton: {
+    width: "100%",
+    background: "#334155",
+    color: "#fff",
+    border: "none",
+    borderRadius: "10px",
+    padding: "12px",
+    cursor: "pointer"
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px"
+  },
+  input: {
+    background: "#334155",
+    color: "#fff",
+    border: "none",
+    borderRadius: "10px",
+    padding: "12px",
+    outline: "none"
+  },
+  error: {
+    color: "#ef4444",
+    minHeight: "20px",
+    fontSize: "14px"
+  },
+  primaryButton: {
+    background: "#22c55e",
+    color: "#fff",
+    border: "none",
+    borderRadius: "10px",
+    padding: "12px",
+    cursor: "pointer",
+    fontWeight: "bold"
+  },
+  secondaryButton: {
+    background: "#475569",
+    color: "#fff",
+    border: "none",
+    borderRadius: "10px",
+    padding: "12px",
+    cursor: "pointer",
+    fontWeight: "bold"
+  },
+  transactions: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+    marginTop: "10px"
+  },
+  transactionRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    background: "#334155",
+    borderRadius: "14px",
+    padding: "14px",
+    gap: "12px"
+  },
+  transactionTitle: {
+    margin: 0,
+    fontWeight: "bold"
+  },
+  transactionType: {
+    margin: "4px 0 0",
+    color: "#cbd5e1",
+    fontSize: "13px"
+  },
+  transactionActions: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    flexWrap: "wrap"
+  },
+  greenTextSmall: {
+    color: "#22c55e"
+  },
+  redTextSmall: {
+    color: "#ef4444"
+  },
+  editButton: {
+    background: "#3b82f6",
+    color: "#fff",
+    border: "none",
+    borderRadius: "8px",
+    padding: "8px 10px",
+    cursor: "pointer"
+  },
+  removeButton: {
+    background: "#475569",
+    color: "#fff",
+    border: "none",
+    borderRadius: "10px",
+    padding: "8px 10px",
+    cursor: "pointer"
+  },
+  legend: {
+    display: "flex",
+    justifyContent: "center",
+    gap: "18px"
+  },
+  legendItem: {
+    color: "#cbd5e1",
+    fontSize: "13px"
+  }
 };
 
 export default Dashboard;

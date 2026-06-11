@@ -27,8 +27,8 @@ const handleSubmit = async (e) => {
       // ⚠️ Conexão real com o IP numérico do Flask e a rota correta
       const response = await fetch("http://127.0.0.1:5000/api/login", {
         method: "POST",
-        headers: { 
-          "Content-Type": "application/json" 
+        headers: {
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({ email: email, password: senha }),
       });
@@ -40,13 +40,14 @@ const handleSubmit = async (e) => {
       }
 
       setErro("");
-      
+
       // Guarda o crachá de segurança (Token JWT) no navegador
-      localStorage.setItem("token", data.token); 
-      
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("username", data.username || "Usuário");
+
       // Entra no sistema de verdade!
       irDashboard();
-      
+
     } catch (err) {
       setErro(err.message);
     }
@@ -124,13 +125,13 @@ const styles = {
   subtitle: {
     color: "#94a3b8",
     marginBottom: "25px",
-    marginTop: "30px", 
+    marginTop: "30px",
   },
   erro: {
     color: "#ef4444",
     marginBottom: "10px",
     fontSize: "14px",
-    minHeight: "20px", 
+    minHeight: "20px",
   },
   form: {
     display: "flex",

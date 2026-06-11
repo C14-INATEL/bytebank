@@ -1,29 +1,41 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
+
+function authHeaders() {
+  const token = localStorage.getItem("token");
+  return { "Content-Type": "application/json", Authorization: `Bearer ${token}` };
+}
 
 function Dashboard({ sair }) {
-  const [descricao, setDescricao] = useState("");
-  const [valor, setValor] = useState("");
-  const [tipo, setTipo] = useState("receita");
-  const [erro, setErro] = useState("");
+  const username = localStorage.getItem("username") || "Usuário";
+
+  const [descricao, setDescricao]   = useState("");
+  const [valor, setValor]           = useState("");
+  const [tipo, setTipo]             = useState("receita");
+  const [categoria, setCategoria]   = useState("outros");
+  const [erro, setErro]             = useState("");
   const [editandoId, setEditandoId] = useState(null);
+  const [busca, setBusca]           = useState("");
+  const [loading, setLoading]       = useState(false);
+  const [abaSidebar, setAbaSidebar] = useState("dashboard");
 
-  const [transacoes, setTransacoes] = useState(() => {
-    const transacoesSalvas = localStorage.getItem("bytebank_transacoes");
+  const [transacoes, setTransacoes] = useState([]);
 
-    if (transacoesSalvas) {
-      return JSON.parse(transacoesSalvas);
+  // ── Carrega transações da API ──────────────────────────────────────────────
+  const carregarTransacoes = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API}/transactions`, { headers: authHeaders() });
+      if (res.status === 401) { sair(); return; }
+      const data = await res.json();
+      setTransacoes(Array.isArray(data) ? data : []);
+    } catch {
+      setErro("Erro ao carregar transações.");
+    } finally {
+      setLoading(false);
     }
+  }, [sair]);
 
-    return [
-      { id: 1, descricao: "Salário", tipo: "receita", valor: 3500 },
-      { id: 2, descricao: "Mercado", tipo: "despesa", valor: 280 },
-      { id: 3, descricao: "Uber", tipo: "despesa", valor: 45.5 },
-    ];
-  });
-
-  useEffect(() => {
-    localStorage.setItem("bytebank_transacoes", JSON.stringify(transacoes));
-  }, [transacoes]);
+  useEffect(() => { carregarTransacoes(); }, [carregarTransacoes]);
 
   const receitas = useMemo(
     () =>

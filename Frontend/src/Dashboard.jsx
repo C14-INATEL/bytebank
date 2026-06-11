@@ -37,88 +37,107 @@ function Dashboard({ sair }) {
 
   useEffect(() => { carregarTransacoes(); }, [carregarTransacoes]);
 
+  // ── Cálculos financeiros ───────────────────────────────────────────────────
   const receitas = useMemo(
-    () =>
-      transacoes
-        .filter((item) => item.tipo === "receita")
-        .reduce((acc, item) => acc + item.valor, 0),
+    () => transacoes.filter(t => t.type === "receita").reduce((a, t) => a + t.amount, 0),
     [transacoes]
   );
-
   const despesas = useMemo(
-    () =>
-      transacoes
-        .filter((item) => item.tipo === "despesa")
-        .reduce((acc, item) => acc + item.valor, 0),
+    () => transacoes.filter(t => t.type === "despesa").reduce((a, t) => a + t.amount, 0),
     [transacoes]
   );
-
   const saldo = receitas - despesas;
-  const totalMovimentado = receitas + despesas;
 
-  const formatarMoeda = (numero) =>
-    numero.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
+  // ── Gastos por categoria ───────────────────────────────────────────────────
+  const gastosPorCategoria = useMemo(() => {
+    const mapa = {};
+    transacoes.filter(t => t.type === "despesa").forEach(t => {
+      const cat = t.category || "outros";
+      mapa[cat] = (mapa[cat] || 0) + t.amount;
     });
+    return mapa;
+  }, [transacoes]);
+
+  // ── Filtragem por busca ────────────────────────────────────────────────────
+  const transacoesFiltradas = useMemo(() => {
+    if (!busca.trim()) return transacoes;
+    const q = busca.toLowerCase();
+    return transacoes.filter(t =>
+      t.description?.toLowerCase().includes(q) ||
+      t.category?.toLowerCase().includes(q) ||
+      t.type?.toLowerCase().includes(q)
+    );
+  }, [transacoes, busca]);
+
+  const formatarMoeda = (n) =>
+    Number(n).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
   const limparFormulario = () => {
-    setDescricao("");
-    setValor("");
-    setTipo("receita");
-    setErro("");
-    setEditandoId(null);
+    setDescricao(""); setValor(""); setTipo("receita");
+    setCategoria("outros"); setErro(""); setEditandoId(null);
   };
 
-  const handleSubmit = (e) => {
+  // ── Adicionar / Editar transação ───────────────────────────────────────────
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!descricao || !valor) {
-      setErro("Preencha descrição e valor");
-      return;
-    }
-
+    if (!descricao || valor === "") { setErro("Preencha descrição e valor"); return; }
     const valorNumero = Number(valor);
+    if (isNaN(valorNumero) || valorNumero < 0) { setErro("Digite um valor válido (0 ou maior)"); return; }
 
-    if (Number.isNaN(valorNumero) || valorNumero <= 0) {
-      setErro("Digite um valor válido");
-      return;
-    }
+    const payload = {
+      type: tipo,
+      category: categoria,
+      amount: valorNumero,
+      description: descricao,
+      date: new Date().toISOString(),
+    };
 
-    if (editandoId) {
-      setTransacoes(
-        transacoes.map((item) =>
-          item.id === editandoId
-            ? { ...item, descricao, tipo, valor: valorNumero }
-            : item
-        )
-      );
+    try {
+      if (editandoId) {
+        const res = await fetch(`${API}/transactions/${editandoId}`, {
+          method: "PUT", headers: authHeaders(), body: JSON.stringify(payload),
+        });
+        if (!res.ok) { const d = await res.json(); setErro(d.error || "Erro ao editar"); return; }
+      } else {
+        const res = await fetch(`${API}/transactions`, {
+          method: "POST", headers: authHeaders(), body: JSON.stringify(payload),
+        });
+        if (!res.ok) { const d = await res.json(); setErro(d.error || "Erro ao adicionar"); return; }
+      }
       limparFormulario();
-      return;
-    }
-
-    setTransacoes([
-      { id: Date.now(), descricao, tipo, valor: valorNumero },
-      ...transacoes,
-    ]);
-
-    limparFormulario();
+      carregarTransacoes();
+    } catch { setErro("Erro de conexão com o servidor."); }
   };
 
+  // ── Editar ─────────────────────────────────────────────────────────────────
   const editarTransacao = (item) => {
-    setDescricao(item.descricao);
-    setValor(String(item.valor));
-    setTipo(item.tipo);
-    setEditandoId(item.id);
+    setDescricao(item.description || "");
+    setValor(String(item.amount));
+    setTipo(item.type || "receita");
+    setCategoria(item.category || "outros");
+    setEditandoId(item._id);
     setErro("");
+    setAbaSidebar("dashboard");
   };
 
-  const removerTransacao = (id) => {
-    setTransacoes(transacoes.filter((item) => item.id !== id));
+  // ── Remover ────────────────────────────────────────────────────────────────
+  const removerTransacao = async (id) => {
+    if (!confirm("Deseja remover esta transação?")) return;
+    try {
+      const res = await fetch(`${API}/transactions/${id}`, {
+        method: "DELETE", headers: authHeaders(),
+      });
+      if (!res.ok) { setErro("Erro ao remover transação."); return; }
+      if (editandoId === id) limparFormulario();
+      carregarTransacoes();
+    } catch { setErro("Erro de conexão."); }
+  };
 
-    if (editandoId === id) {
-      limparFormulario();
-    }
+  // ── Logout ─────────────────────────────────────────────────────────────────
+  const handleSair = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    sair();
   };
 
   return (

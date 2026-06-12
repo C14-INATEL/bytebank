@@ -275,11 +275,9 @@ ByteBank/
 
 ## 🗂️ Metodologia de Desenvolvimento
 
-### Metodologia adotada — Kanban com cadência semanal
+O grupo não adotou formalmente nenhuma metodologia ágil estruturada. Na prática, o desenvolvimento aconteceu de forma colaborativa e informal, com características que se aproximam do **Kanban** — o mais próximo que chegamos de uma metodologia definida.
 
-O grupo adotou uma abordagem *Kanban* adaptada ao contexto acadêmico, combinada com elementos de revisão de código inspirados em práticas do *XP (Extreme Programming)*. A escolha pelo Kanban se deu pela flexibilidade de não exigir sprints rígidos, sendo mais compatível com a rotina de estudantes com cargas horárias variáveis entre as semanas.
-
-Em vez de sprints formais, o grupo operou em *ciclos semanais informais*: a cada semana as issues abertas eram priorizadas e distribuídas, e ao final da semana o andamento era revisado via Discord.
+O trabalho foi organizado por funcionalidades: cada membro ficou responsável por uma área do sistema e o progresso era acompanhado nas reuniões semanais pelo Discord. Não houve sprints formais, quadro Kanban explícito, nem cerimônias definidas — as decisões foram tomadas de forma direta entre os integrantes conforme a necessidade.
 
 ---
 
@@ -287,50 +285,20 @@ Em vez de sprints formais, o grupo operou em *ciclos semanais informais*: a cada
 
 | Papel | Responsável | Atribuições principais |
 |-------|-------------|------------------------|
-| Product Owner (PO) | [Henrique, Luis Otavio e Felipe] | Definição de prioridades, escopo das funcionalidades e histórias de usuário |
-| Tech Lead / Backend | [Henrique e Felipe] | Arquitetura Flask, serviços, modelos e autenticação JWT |
-| Desenvolvedor Frontend | [Luis Otavio] | Componentes React, integração com a API, telas de login e dashboard |
-| QA / Testes | [Henrique, Luis Otavio e Felipe] | Escrita e manutenção dos testes unitários (pytest e vitest) |
-| DevOps / CI-CD | [Henrique e Luis Otavio] | Configuração e manutenção do pipeline GitLab CI |
-
+| Backend — modelos e rotas | Henrique Fonseca e Felipe Fonseca | Arquitetura Flask, serviços, modelos e autenticação JWT |
+| Frontend | Luis Otávio Amante | Componentes React, integração com a API, telas de login e dashboard |
+| Testes e pipeline | Felipe Fonseca, Henrique Fonseca e Luis Otávio Amante | Testes unitários (pytest e vitest) e configuração do GitLab CI |
 
 ---
 
-### Cadência e ferramentas
+### Ferramentas utilizadas
 
-- *Reuniões:* encontros semanais por chamada de voz no *Discord* ([Quarta e Sexta], aproximadamente [13:30])
-- *Comunicação assíncrona:* canal de texto no Discord para dúvidas, decisões rápidas e compartilhamento de links
-- *Gerenciamento de tarefas:* issues do *GitLab* como quadro Kanban (colunas: Open → In Progress → Closed)
-- *Versionamento:* GitLab com fluxo de branches por funcionalidade e pull requests obrigatórios para mergear na main
-- *Período de desenvolvimento:* [Março] a [Junho] de [2026]
+- **Comunicação:** Discord — chamadas de voz semanais e canal de texto para decisões rápidas
+- **Versionamento:** GitLab com branches por funcionalidade e pull requests para mergear na `main`
+- **Período de desenvolvimento:** Março a Junho de 2026
 
 ---
 
-### Definição de Pronto (DoD) e Definição de Preparado (DoR)
-
-*Definição de Preparado (DoR)* — uma issue só era iniciada quando:
-- O escopo estava claro e descrito na issue
-- Não havia dependência bloqueante de outra tarefa em aberto
-
-*Definição de Pronto (DoD)* — uma tarefa só era considerada concluída quando:
-- O código estava implementado e funcionando localmente
-- Ao menos um teste unitário relevante cobria a funcionalidade
-- O pull request havia sido revisado e aprovado por ao menos um outro membro
-- O pipeline passava sem erros após o merge
-
----
-
-### Métricas do projeto
-
-| Métrica | Valor |
-|---------|-------|
-| Total de issues abertas | [Nº] |
-| Total de issues fechadas | [Nº] |
-| Total de pull requests mergeados | [Nº] |
-| Média de issues fechadas por ciclo semanal | [Nº] |
-| Cobertura de testes (backend) | [XX%] |
-
----
 
 ## 🔁 Dinâmica de Desenvolvimento
 
@@ -355,7 +323,7 @@ As decisões técnicas foram tomadas coletivamente nas reuniões semanais do Dis
 
 ---
 
-### Fluxo de branches e padrão de commitsx
+### Fluxo de branches e padrão de commits
 
 O grupo adotou o seguinte fluxo de branches:
 
@@ -531,11 +499,73 @@ O arquivo `.gitlab-ci.yml` define o pipeline com **6 stages** e **10 jobs** exec
 
 ## 🤖 Uso de IA
 
-> preencher
+O uso de Inteligência Artificial foi adotado de forma transparente ao longo do projeto, como ferramenta de apoio ao desenvolvimento — e não como substituto do entendimento técnico do grupo.
+
+---
+
+### Modelos utilizados
+
+| Modelo | Plataforma | Uso principal |
+|--------|-----------|---------------|
+| Claude Sonnet (Anthropic) | claude.ai | Geração de código, debugging, documentação, refatoração, pipeline CI/CD |
+
+---
+
+### Para quê foi usado
+
+- **Geração de código:** estrutura inicial do `Dashboard.jsx`, integração com a API REST, pipeline GitLab CI completo com 6 stages
+- **Refatoração:** migração do Dashboard de `localStorage` para consumo real da API; remoção de credenciais hardcoded do `__init__.py` para variáveis de ambiente
+- **Debugging:** identificação da causa do erro `ReferenceError: API is not defined` e do erro de conexão ao adicionar transações
+- **Documentação:** geração das histórias de usuário (US-01 a US-06), seções de Metodologia e Dinâmica de Desenvolvimento do README
+- **CI/CD:** criação do `.gitlab-ci.yml` com stages de install, test, build, package, deploy e notify
+
+---
+
+### Exemplos reais de prompts utilizados
+
+**Prompt 1 — Integração com a API (aceito com ajustes)**
+> *"Verifique todas as funcionalidades e os botões que estão faltando, o dinheiro inicial está com um bug e não está começando com 0"*
+
+A IA identificou 8 problemas no Dashboard (uso de localStorage em vez da API, busca não funcional, botões sem ação, valor 0 bloqueado, campo categoria ausente) e reescreveu o componente incompleto.
+
+---
+
+**Prompt 2 — Pipeline CI/CD (aceito com ajuste de branch)**
+> *"Crie um pipeline base que contenha isso: instalação de dependências; execução de testes; validação/build do projeto; empacotamento ou geração de artefatos; simulação de deploy; notificações ou mensagens de status da pipeline."*
+
+A IA gerou o `.gitlab-ci.yml` com 6 stages e 10 jobs. O grupo ajustou o job `deploy-simulation` para apontar para a branch correta do repositório (`main`) e confirmou que nenhum job usa GitHub Actions (requisito da disciplina).
+
+---
+
+**Prompt 3 — Refatoração de segurança (aceito integralmente)**
+> *"Ajuste o `__init__.py` — as credenciais do MongoDB não é recomendada estarem hardcoded no código"*
+
+A IA migrou as credenciais para variáveis de ambiente usando `python-dotenv`, criou o `.env.example` e explicou que a `SECRET_KEY` é usada para assinar tokens JWT. O grupo entendeu a mudança, atualizou o `.env` local e confirmou que o `.env` já estava no `.gitignore`.
+
+---
+
+### Dinâmica de uso
+
+- A IA foi usada **individualmente** por cada membro conforme a necessidade da sua tarefa
+- Nenhum código gerado foi commitado sem revisão — todo output foi lido, testado e entendido antes de ser incorporado
+- Em alguns casos a resposta foi **ajustada** (ex: números de issue nas histórias de usuário foram trocados pelos reais do GitLab)
+- Em outros casos foi **descartada** parcialmente (ex: sugestão de usar `localStorage` foi descartada em favor da integração real com a API)
+
+---
+
+### O que **não** foi feito por IA
+
+- Lógica de negócio do backend (`services.py`) — desenvolvida manualmente pelo grupo
+- Modelagem do banco de dados MongoDB — decisão de estrutura tomada pelo grupo
+- Decisões de arquitetura (separação backend/frontend, escolha do MongoDB, uso do GitLab CI) — tomadas pelo grupo
+- Ajustes no pipeline conforme o andamento do projeto
 
 ---
 
 ## 👥 Equipe
 
-> nomes
->
+| Nome | GitHub               |
+|------|----------------------|
+| Felipe Fonseca | `[@FelpsFonseca]`    |
+| Henrique Fonseca | `[@Hfc10]`           |
+| Luis Otávio Amante | `[@luizotavio-amante]` |

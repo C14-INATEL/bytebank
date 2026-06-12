@@ -371,6 +371,91 @@ O grupo adotou o seguinte fluxo de branches:
 
 ---
 
+## 🔨 Refactoring
+
+Ao longo do projeto, três refatorações significativas foram aplicadas. Todas estão evidenciadas no histórico de commits do repositório.
+
+---
+
+### Refactoring 1 — Remoção de credenciais hardcoded (`__init__.py`)
+
+**O que era antes:**
+```python
+uri = "mongodb+srv://usuario:senha@cluster0.ejccf4y.mongodb.net/?appName=Cluster0"
+app.config['SECRET_KEY'] = "minha-chave-secreta"
+```
+
+**O que virou:**
+```python
+load_dotenv()
+_mongo_uri = os.getenv('MONGO_URI', '')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'chave-local-desenvolvimento')
+```
+
+**Por quê:** credenciais hardcoded no código são uma vulnerabilidade de segurança grave — qualquer pessoa com acesso ao repositório conseguiria acessar o banco de dados. A refatoração migrou todas as configurações sensíveis para variáveis de ambiente via `python-dotenv`, seguindo a prática recomendada de separar configuração de código.
+
+**Evidência:** commit `"Privando a senha do mongodb com o .env"`
+
+---
+
+### Refactoring 2 — Migração do Dashboard de `localStorage` para API REST
+
+**O que era antes:**
+```js
+// Dados armazenados localmente no navegador
+const [transacoes, setTransacoes] = useState(() => {
+  const salvas = localStorage.getItem("bytebank_transacoes");
+  return salvas ? JSON.parse(salvas) : [
+    { id: 1, descricao: "Salário", tipo: "receita", valor: 3500 },
+    { id: 2, descricao: "Mercado", tipo: "despesa", valor: 280 },
+  ];
+});
+```
+
+**O que virou:**
+```js
+// Dados carregados da API real com autenticação JWT
+const carregarTransacoes = useCallback(async () => {
+  const res = await fetch(`${API}/transactions`, { headers: authHeaders() });
+  const data = await res.json();
+  setTransacoes(Array.isArray(data) ? data : []);
+}, [sair]);
+```
+
+**Por quê:** o Dashboard original usava `localStorage` com dados estáticos fictícios, ignorando completamente o backend implementado. A refatoração conectou o frontend ao backend real, tornando a aplicação funcional de ponta a ponta — os dados passaram a ser persistidos no MongoDB e isolados por usuário via token JWT.
+
+**Evidência:** commit `"trocando alguns testes do front pra Api(antes usava localStorage)"`
+
+---
+
+### Refactoring 3 — Limpeza do `requirements.txt`
+
+**O que era antes:**
+```
+# dependências com versão pinada + duplicatas sem versão ao final
+Flask==3.1.3
+pymongo==4.6.1
+...
+flask          # ← duplicata sem versão
+flask-sqlalchemy  # ← dependência morta (projeto usa MongoDB)
+pymysql           # ← dependência morta (projeto usa MongoDB)
+```
+
+**O que virou:**
+```
+# arquivo limpo, sem duplicatas, sem dependências não utilizadas
+Flask==3.1.3
+pymongo==4.6.1
+flask-cors==5.0.1
+...
+```
+
+**Por quê:** o `requirements.txt` continha dependências de um banco relacional (`flask-sqlalchemy`, `pymysql`) que nunca foram usadas no projeto — o banco escolhido foi MongoDB. Além disso, havia entradas duplicadas sem versão pinada que poderiam causar conflitos no `pip install`. A limpeza tornou o build reproduzível e removeu dependências mortas.
+
+**Evidência:** commit `"Privando a senha do mongodb com o .env"` (mesmo commit da refatoração 1)
+
+---
+
 ## 🛠️ Tecnologias Utilizadas
 
 ### 🎨 Frontend
